@@ -94,3 +94,11 @@ export interface CartItem {
   image: string;
   quantity: number;
 }
+
+// Coupon Entity
+export interface Coupon {
+  id: string;
+  code: string;
+  description: string;
+  min_purchase?: number;
+}

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
-const { HashRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
+const { BrowserRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
 import { AnimatePresence, motion } from "framer-motion";
 // Fix: Removed file extensions from local component imports
 import Navbar from './components/Navbar';
@@ -20,6 +20,7 @@ import Wishlist from './pages/Wishlist';
 import CartPage from './pages/Cart';
 import NotificationHandler from './components/NotificationHandler';
 import SalesBanner from './components/SalesBanner';
+import Footer from './components/Footer';
 import { CartItem, Product, ProductVariant } from './types';
 
 // Admin Imports
@@ -177,7 +178,7 @@ const AppContent: React.FC = () => {
             <Route path="/shop" element={<Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/>} />
             <Route path="/product/:slug" element={<ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} />} />
             <Route path="/cart" element={<CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} />} />
-            <Route path="/checkout" element={<Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} />} />
+            <Route path="/checkout" element={<Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} />} />
             <Route path="/order-success" element={<OrderSuccess order={latestOrder} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Account />} />
@@ -195,6 +196,7 @@ const AppContent: React.FC = () => {
             </Route>
           </Routes>
         </main>
+        {!isAdminRoute && <Footer />}
         {!isAdminRoute && (
           <NotificationHandler notifications={notifications} setNotifications={setNotifications} />
         )}
@@ -207,13 +209,13 @@ const App: React.FC = () => {
   const [isPreloading, setIsPreloading] = useState(true);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ScrollToTop />
       {isPreloading && <Preloader onComplete={() => setIsPreloading(false)} />}
       <div className={`transition-opacity duration-1000 ${isPreloading ? 'opacity-0' : 'opacity-100'}`}>
         {!isPreloading && <AppContent />}
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

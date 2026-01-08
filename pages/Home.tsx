@@ -213,31 +213,6 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             ))}
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="bg-brand-gray-100 pt-32 pb-16 px-10 lg:px-12 border-t border-brand-gray-950/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[60%] h-full bg-brand-espresso/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="relative z-10 max-w-screen-xl mx-auto">
-          <div className="lg:flex lg:justify-between lg:items-start mb-24 text-center lg:text-left">
-            <div className="lg:w-1/2 mb-12 lg:mb-0 flex flex-col items-center lg:items-start">
-              <img src="BAZZARO DARK LOGO (1).png" alt="Bazzaro" className="h-10 w-auto mb-10" />
-              <h2 className="font-serif text-4xl mb-6 italic text-brand-gray-900">The Dispatch</h2>
-              <p className="text-brand-tan text-[9px] uppercase font-black tracking-[0.5em] mb-12">Authorized Access Only.</p>
-            </div>
-            <div className="w-full max-w-sm mx-auto lg:mx-0 lg:w-1/2 lg:max-w-md flex flex-col gap-4">
-              <input type="email" placeholder="IDENTITY@ARCHIVE.COM" className="w-full bg-white border border-brand-gray-900/10 rounded-full py-6 px-10 text-[10px] font-black uppercase tracking-[0.4em] text-center focus:outline-none focus:border-brand-espresso transition-all text-brand-gray-900" />
-              <button className="w-full bg-brand-tan text-white py-6 rounded-full text-[10px] font-black uppercase tracking-[0.5em] transition-all hover:bg-brand-sepia">Authorize</button>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
-            <div className="space-y-4"><h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan">Studio</h4><ul className="space-y-2 text-[11px] font-bold uppercase tracking-widest text-brand-gray-600"><li><Link to="/shop" className="hover:text-brand-gray-900 transition-colors">Archive</Link></li><li><Link to="/editorial" className="hover:text-brand-gray-900 transition-colors">Editorial</Link></li><li><Link to="/about" className="hover:text-brand-gray-900 transition-colors">About</Link></li></ul></div>
-            <div className="space-y-4"><h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan">Concierge</h4><ul className="space-y-2 text-[11px] font-bold uppercase tracking-widest text-brand-gray-600"><li><Link to="/contact" className="hover:text-brand-gray-900 transition-colors">Support</Link></li><li><Link to="/contact" className="hover:text-brand-gray-900 transition-colors">Logistics</Link></li><li><Link to="/contact" className="hover:text-brand-gray-900 transition-colors">Legal</Link></li></ul></div>
-            <div className="space-y-4"><h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan">Social</h4><ul className="space-y-2 text-[11px] font-bold uppercase tracking-widest text-brand-gray-600"><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Instagram</a></li><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Twitter</a></li><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Pinterest</a></li></ul></div>
-            <div className="space-y-4"><h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan">Network</h4><ul className="space-y-2 text-[11px] font-bold uppercase tracking-widest text-brand-gray-600"><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Careers</a></li><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Press</a></li><li><a href="#" className="hover:text-brand-gray-900 transition-colors">Affiliates</a></li></ul></div>
-          </div>
-          <div className="flex flex-col items-center pt-16 border-t border-brand-gray-900/5"><div className="text-[8px] text-brand-gray-500 uppercase tracking-[0.5em] mb-4">&copy; 2025 BAZZARO INTERNATIONAL SYSTEM</div><div className="flex gap-4"><div className="w-1.5 h-1.5 rounded-full bg-brand-tan/30" /><div className="w-1.5 h-1.5 rounded-full bg-brand-tan/30" /><div className="w-1.5 h-1.5 rounded-full bg-brand-tan/30" /></div></div>
-        </div>
-      </footer>
     </div>
   );
 };

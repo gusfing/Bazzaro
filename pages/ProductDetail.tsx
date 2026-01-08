@@ -6,10 +6,11 @@ const { useParams, useNavigate, Link } = ReactRouterDOM as any;
 import { Heart, ChevronLeft, Minus, Plus, Star, ChevronDown, Share2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 // Fix: Removed file extensions from local component imports
-import { MOCK_PRODUCTS } from '../constants';
+import { MOCK_PRODUCTS, MOCK_COUPONS } from '../constants';
 import { Product, ProductVariant, Review } from '../types';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
+import CouponCard from '../components/CouponCard';
 
 interface ProductDetailProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -19,7 +20,40 @@ interface ProductDetailProps {
 }
 
 const ProductSchema: React.FC<{ product: Product; selectedVariant: ProductVariant | undefined }> = ({ product, selectedVariant }) => {
-  const productSchema = { /* ... SEO schema ... */ };
+  const productUrl = window.location.href;
+  const stockStatus = selectedVariant && selectedVariant.stock_quantity > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
+  const nextYear = new Date();
+  nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.title,
+    "image": [product.image_url, ...product.other_images],
+    "description": product.description,
+    "sku": selectedVariant?.sku || product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "BAZZARO"
+    },
+    ...(product.reviews && product.rating && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": product.rating.toFixed(1),
+        "reviewCount": product.reviews_count || product.reviews.length
+      }
+    }),
+    "offers": {
+      "@type": "Offer",
+      "url": productUrl,
+      "priceCurrency": "USD",
+      "price": product.base_price.toFixed(2),
+      "priceValidUntil": nextYear.toISOString().split('T')[0],
+      "availability": stockStatus,
+      "itemCondition": "https://schema.org/NewCondition"
+    }
+  };
+
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />;
 };
 
@@ -141,6 +175,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
   const selectedVariant = product.variants.find(v => v.id === selectedVariantId);
   const stockLevel = selectedVariant?.stock_quantity ?? 0;
 
+  const applicableCoupons = MOCK_COUPONS.filter(coupon => !coupon.min_purchase || product.base_price >= coupon.min_purchase);
+
   const handleAddToCart = () => { if (selectedVariant) onAddToCart(product, selectedVariant, quantity); };
   const handleBuyNow = () => { if (selectedVariant) { onAddToCart(product, selectedVariant, quantity); navigate('/checkout'); }};
   
@@ -179,7 +215,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
             </div>
             
             {/* Image Carousel Column */}
-            <div className="pt-12 lg:pt-0">
+            <div className="pt-12 lg:pt-0 lg:sticky lg:top-32">
                 <div className="relative aspect-[4/5] w-full bg-brand-gray-900 rounded-2xl overflow-hidden">
                     <AnimatePresence initial={false} custom={direction}>
                         <motion.img
@@ -214,10 +250,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                         ))}
                     </div>
                 </div>
+                {/* Thumbnail Gallery */}
+                <div className="mt-4 hidden lg:flex items-center justify-center gap-3">
+                    {galleryImages.map((img, i) => (
+                        <button
+                            key={`thumb-${i}`}
+                            onClick={() => goToSlide(i)}
+                            className={`w-16 h-16 rounded-xl overflow-hidden transition-all duration-300 border-2 ${imageIndex === i ? 'border-brand-gray-50 scale-110' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                        >
+                            <img src={img} alt={`Thumbnail ${i+1}`} className="w-full h-full object-cover" />
+                        </button>
+                    ))}
+                </div>
             </div>
             
             {/* Details Column */}
-            <div className="bg-brand-gray-950 rounded-t-[3.5rem] p-10 pb-12 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] z-30 -mt-16 relative lg:mt-0 lg:bg-transparent lg:shadow-none lg:rounded-none lg:p-0 lg:sticky lg:top-32">
+            <div className="bg-brand-gray-950 rounded-t-[3.5rem] p-10 pb-12 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] z-30 -mt-16 relative lg:mt-0 lg:bg-transparent lg:shadow-none lg:rounded-none lg:p-0">
                 <div className="max-w-md mx-auto lg:max-w-none">
                   <div className="hidden lg:flex justify-between items-center mb-6">
                     <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-gray-400 hover:text-brand-gray-50 transition-colors"><ChevronLeft size={16} /> Back</button>
@@ -231,20 +279,55 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                       <div className="flex gap-3">{product.variants.map((v) => <button key={v.id} onClick={() => setSelectedVariantId(v.id)} className={`w-8 h-8 rounded-full border-2 transition-all duration-300 ${selectedVariantId === v.id ? 'border-brand-gray-50' : 'border-transparent'}`} style={{ backgroundColor: v.hex || '#333' }} />)}</div>
                       <div className="bg-brand-gray-800 rounded-full px-2 py-1 flex items-center gap-4 border border-brand-gray-50/5"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 h-8 flex items-center justify-center text-brand-gray-400 hover:text-brand-gray-50 transition-colors"><Minus size={14} /></button><span className="text-brand-gray-50 text-sm font-bold w-4 text-center">{quantity}</span><button onClick={() => setQuantity(quantity + 1)} className="w-8 h-8 flex items-center justify-center text-brand-gray-400 hover:text-brand-gray-50 transition-colors"><Plus size={14} /></button></div>
                   </div>
-                  <div className="mb-4 h-4"><p className="text-right text-[10px] font-bold uppercase tracking-widest">{stockLevel > 10 && <span className="text-brand-success">In Stock</span>}{stockLevel <= 10 && stockLevel > 0 && <span className="text-brand-warning">Low Stock ({stockLevel} left)</span>}{stockLevel === 0 && <span className="text-brand-error">Out of Stock</span>}</p></div>
-                  <div className="mb-8">
-                      <AccordionItem title="Description" defaultOpen><p>{product.description}</p></AccordionItem>
-                      {(product.materials || product.dimensions) && <AccordionItem title="Specifications"><ul className="space-y-2 list-disc list-inside"> {product.materials && <li><strong>Materials:</strong> {product.materials}</li>} {product.dimensions && <li><strong>Dimensions:</strong> {product.dimensions}</li>} </ul></AccordionItem>}
-                      {product.reviews && <AccordionItem title={`Reviews (${product.reviews_count})`}><ReviewsSection product={product} /></AccordionItem>}
-                      {product.faq && <AccordionItem title="Common Questions"><ul className="space-y-4">{product.faq.map(f => (<li key={f.question}><strong>{f.question}</strong><p className="mt-1 text-brand-gray-500">{f.answer}</p></li>))}</ul></AccordionItem>}
-                      <AccordionItem title="Shipping & Returns"><p>Complimentary worldwide shipping. Returns accepted within 14 days of receipt.</p></AccordionItem>
+                  <div className="mb-4 h-4">
+                      <div className="flex items-center justify-end gap-2 text-right text-[10px] font-bold uppercase tracking-widest">
+                        {stockLevel > 10 && (
+                            <>
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-brand-success opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-success"></span>
+                                </span>
+                                <span className="text-brand-success">In Stock</span>
+                            </>
+                        )}
+                        {stockLevel <= 10 && stockLevel > 0 && (
+                            <>
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-pulse-dot absolute inline-flex h-full w-full rounded-full bg-brand-warning opacity-75" style={{ animationDuration: '1s'}}></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-warning"></span>
+                                </span>
+                                <span className="text-brand-warning">Low Stock ({stockLevel} left)</span>
+                            </>
+                        )}
+                        {stockLevel === 0 && <span className="text-brand-error">Out of Stock</span>}
+                      </div>
                   </div>
-                  <div className="space-y-4">
+                  
+                  <div className="space-y-4 mb-8">
                       <div className="flex justify-between items-center gap-4">
                       <div className="flex flex-col"><span className="text-brand-gray-400 text-xs">Price</span><span className="text-brand-gray-50 text-2xl font-bold leading-none">${product.base_price.toFixed(2)}</span></div>
                       <button onClick={handleAddToCart} disabled={!selectedVariant || stockLevel === 0} className="flex-grow bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-brand-gray-50/20 disabled:opacity-40 disabled:cursor-not-allowed">Add to Cart</button>
                       </div>
                       <button onClick={handleBuyNow} disabled={!selectedVariant || stockLevel === 0} className="w-full bg-brand-gold text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">Buy Now</button>
+                  </div>
+
+                  {applicableCoupons.length > 0 && (
+                    <div className="mb-8">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-brand-gray-400 mb-4">Save extra with these offers</h3>
+                      <div className="space-y-3">
+                        {applicableCoupons.map(coupon => (
+                          <CouponCard key={coupon.id} coupon={coupon} addNotification={addNotification} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                      <AccordionItem title="Description" defaultOpen><p>{product.description}</p></AccordionItem>
+                      {(product.materials || product.dimensions) && <AccordionItem title="Specifications"><ul className="space-y-2 list-disc list-inside"> {product.materials && <li><strong>Materials:</strong> {product.materials}</li>} {product.dimensions && <li><strong>Dimensions:</strong> {product.dimensions}</li>} </ul></AccordionItem>}
+                      {product.reviews && <AccordionItem title={`Reviews (${product.reviews_count})`}><ReviewsSection product={product} /></AccordionItem>}
+                      {product.faq && <AccordionItem title="Common Questions"><ul className="space-y-4">{product.faq.map(f => (<li key={f.question}><strong>{f.question}</strong><p className="mt-1 text-brand-gray-500">{f.answer}</p></li>))}</ul></AccordionItem>}
+                      <AccordionItem title="Shipping & Returns"><p>Complimentary worldwide shipping. Returns accepted within 14 days of receipt.</p></AccordionItem>
                   </div>
                 </div>
             </div>

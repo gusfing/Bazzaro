@@ -46,11 +46,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
     });
   }, [variantImages]);
 
-  // Fix: Extracted framer-motion props to an object to bypass type-checking errors.
-  const cardMotionProps = {
-    initial: false,
-  };
-
   const newBadgeMotionProps = {
     initial: { opacity: 0, x: -10 },
     animate: { opacity: 1, x: 0 },
@@ -70,7 +65,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
       className="break-inside-avoid block group relative select-none"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      {...cardMotionProps}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
     >
       {/* Wishlist Button */}
       <button 
@@ -130,40 +128,72 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
               className="bg-brand-gray-950/40 text-brand-gray-50 rounded-[2.5rem] p-6 border border-brand-gray-50/10 shadow-2xl backdrop-blur-xl overflow-hidden"
             >
               <div className="relative z-10">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1 min-w-0 pr-4">
-                    <h3 className="text-[11px] font-black uppercase tracking-[0.2em] leading-tight mb-1.5 truncate">
-                      {product.title}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <Star size={10} className="text-brand-tan fill-brand-tan" />
-                      <span className="text-[9px] text-brand-gray-400 font-mono tracking-tighter">{product.rating?.toFixed(1)} / 5.0</span>
-                    </div>
-                  </div>
-                  <div className="shrink-0 flex flex-col items-end">
-                    <span className="text-2xl font-serif italic leading-none">${product.base_price}</span>
-                  </div>
-                </div>
+                <AnimatePresence initial={false}>
+                  {imageLoaded ? (
+                    <motion.div
+                      key="content"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1 min-w-0 pr-4">
+                          <h3 className="text-[11px] font-black uppercase tracking-[0.2em] leading-tight mb-1.5 truncate">
+                            {product.title}
+                          </h3>
+                          <div className="flex items-center gap-2">
+                            <Star size={10} className="text-brand-tan fill-brand-tan" />
+                            <span className="text-[9px] text-brand-gray-400 font-mono tracking-tighter">{product.rating?.toFixed(1)} / 5.0</span>
+                          </div>
+                        </div>
+                        <div className="shrink-0 flex flex-col items-end">
+                          <span className="text-2xl font-serif italic leading-none">${product.base_price}</span>
+                        </div>
+                      </div>
 
-                <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
-                  <div className="flex justify-between items-center w-full">
-                    <div className="flex gap-2.5 items-center">
-                      {uniqueColorVariants.slice(0, 3).map((v) => (
-                        <div 
-                          key={v.id}
-                          onMouseEnter={() => setActiveImageUrl(v.imageUrl)}
-                          className="w-3.5 h-3.5 rounded-full border border-brand-gray-50/20 shadow-inner transition-transform hover:scale-125 cursor-pointer"
-                          style={{ backgroundColor: v.hex || '#333' }}
-                          title={v.color}
-                        />
-                      ))}
-                    </div>
-                    
-                    <div className="w-10 h-10 rounded-full bg-brand-gray-900 flex items-center justify-center transition-all duration-500 group-hover:bg-brand-tan">
-                      <ArrowUpRight size={16} className="text-brand-gray-50" />
-                    </div>
-                  </div>
-                </div>
+                      <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
+                        <div className="flex justify-between items-center w-full">
+                          <div className="flex gap-2.5 items-center">
+                            {uniqueColorVariants.slice(0, 3).map((v) => (
+                              <div 
+                                key={v.id}
+                                onMouseEnter={() => setActiveImageUrl(v.imageUrl)}
+                                className="w-3.5 h-3.5 rounded-full border border-brand-gray-50/20 shadow-inner transition-transform hover:scale-125 cursor-pointer"
+                                style={{ backgroundColor: v.hex || '#333' }}
+                                title={v.color}
+                              />
+                            ))}
+                          </div>
+                          
+                          <div className="w-10 h-10 rounded-full bg-brand-gray-900 flex items-center justify-center transition-all duration-500 group-hover:bg-brand-tan">
+                            <ArrowUpRight size={16} className="text-brand-gray-50" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div key="skeleton">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1 min-w-0 pr-4 space-y-2">
+                            <div className="h-3 bg-brand-gray-800/80 rounded w-3/4 animate-pulse"></div>
+                            <div className="h-2 bg-brand-gray-800/80 rounded w-1/2 animate-pulse"></div>
+                        </div>
+                        <div className="shrink-0">
+                            <div className="h-5 bg-brand-gray-800/80 rounded w-12 animate-pulse"></div>
+                        </div>
+                      </div>
+                      <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
+                          <div className="flex justify-between items-center w-full">
+                              <div className="flex gap-2.5 items-center">
+                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
+                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
+                              </div>
+                              <div className="w-10 h-10 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
+                          </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </div>

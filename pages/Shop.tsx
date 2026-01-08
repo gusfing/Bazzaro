@@ -74,11 +74,6 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             <div 
               key={p.id}
               className={`${idx % 2 !== 0 ? 'mt-12' : ''} md:mt-0`}
-              style={{ 
-                opacity: 0, 
-                animation: 'reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                animationDelay: `${idx * 0.08}s`
-              }}
             >
               <ProductCard product={p} onAddToCart={onAddToCart} toggleWishlist={toggleWishlist} isWishlisted={isWishlisted(p.id)} />
             </div>

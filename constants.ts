@@ -1,11 +1,25 @@
 
-import { Category, Product, ProductVariant, BlogPost, Review } from './types';
+import { Category, Product, ProductVariant, BlogPost, Review, Coupon } from './types';
 
 export const MOCK_CATEGORIES: Category[] = [
   { id: 'c1', name: 'Tote Bags', slug: 'totes', image_url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=800' },
   { id: 'c2', name: 'Crossbody', slug: 'crossbody', image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800' },
   { id: 'c3', name: 'Backpacks', slug: 'backpacks', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800' },
   { id: 'c4', name: 'Clutches', slug: 'clutches', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800' },
+];
+
+export const MOCK_COUPONS: Coupon[] = [
+  {
+    id: 'c1',
+    code: 'BAZZARO10',
+    description: 'Get an EXTRA 10% OFF on your first order. Welcome to the archive.',
+  },
+  {
+    id: 'c2',
+    code: 'FREEGLB',
+    description: 'FREE Global Shipping on all orders above $150.',
+    min_purchase: 150
+  }
 ];
 
 export const MOCK_BLOG_POSTS: BlogPost[] = [

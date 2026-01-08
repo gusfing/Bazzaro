@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { CartItem } from '../types';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { MOCK_PRODUCTS } from '../constants';
@@ -14,9 +15,40 @@ interface CartProps {
   onRemove: (variantId: string) => void;
 }
 
+const RESERVATION_DURATION_SECONDS = 15 * 60; // 15 minutes
+
 const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const storedExpiry = sessionStorage.getItem('cartExpiryTimestamp');
+    if (storedExpiry) {
+        const remaining = Math.round((parseInt(storedExpiry, 10) - Date.now()) / 1000);
+        return remaining > 0 ? remaining : 0;
+    }
+    return RESERVATION_DURATION_SECONDS;
+  });
+
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  useEffect(() => {
+    if (items.length === 0) {
+        sessionStorage.removeItem('cartExpiryTimestamp');
+        return;
+    }
+
+    const storedExpiry = sessionStorage.getItem('cartExpiryTimestamp');
+    if (!storedExpiry) {
+        const newExpiry = Date.now() + RESERVATION_DURATION_SECONDS * 1000;
+        sessionStorage.setItem('cartExpiryTimestamp', newExpiry.toString());
+        setTimeLeft(RESERVATION_DURATION_SECONDS);
+    }
+
+    const timerId = setInterval(() => {
+        setTimeLeft(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [items.length]);
 
   const handleRemove = (variantId: string) => {
     setDeletingId(variantId);
@@ -25,6 +57,11 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
       setDeletingId(null);
     }, 400);
   };
+  
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const isUrgent = timeLeft > 0 && timeLeft < 120; // Under 2 minutes
 
   if (items.length === 0) {
     return (
@@ -49,6 +86,30 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
         <h1 className="font-serif text-5xl italic animate-reveal">Shopping Bag</h1>
       </header>
       
+      {items.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className={`max-w-screen-xl mx-auto w-full px-8 lg:px-12 mb-8`}
+          >
+            <div className={`p-4 rounded-xl flex items-center justify-center gap-4 border transition-colors ${
+              isUrgent ? 'bg-brand-warning/10 border-brand-warning/20' : 'bg-brand-gray-50/5 border-brand-gray-50/10'
+            }`}>
+              <Clock size={18} className={`transition-colors ${isUrgent ? 'text-brand-warning' : 'text-brand-tan'}`} />
+              <p className="text-xs font-bold text-brand-gray-50 leading-snug">
+                {timeLeft > 0 ? (
+                  <>
+                    Items reserved for: <span className={`font-mono text-base ml-2 transition-colors ${isUrgent ? 'text-brand-warning' : 'text-brand-tan'}`}>{formattedTime}</span>
+                  </>
+                ) : (
+                  <span className="text-brand-error">Your cart reservation has expired.</span>
+                )}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
       <div className="max-w-screen-xl mx-auto px-8 lg:px-12 py-4 lg:grid lg:grid-cols-12 lg:gap-12 lg:items-start w-full">
         {/* Item List */}
         <div className="lg:col-span-8 space-y-8">
