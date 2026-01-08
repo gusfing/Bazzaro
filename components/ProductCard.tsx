@@ -26,6 +26,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
     }
   }, [isHovered, product.image_url]);
 
+  const stockStatus = useMemo(() => {
+    const totalStock = product.variants.reduce((acc, v) => acc + v.stock_quantity, 0);
+    if (totalStock > 10) return { text: 'In Stock', color: 'bg-brand-success', textColor: 'text-brand-gray-400' };
+    if (totalStock > 0) return { text: 'Low Stock', color: 'bg-brand-warning', textColor: 'text-brand-warning' };
+    return { text: 'Out of Stock', color: 'bg-brand-error', textColor: 'text-brand-error' };
+  }, [product.variants]);
+
   const variantImages = useMemo(() => {
     const images = [product.image_url, ...product.other_images];
     return product.variants.map((variant, index) => ({
@@ -141,9 +148,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                           <h3 className="text-[11px] font-black uppercase tracking-[0.2em] leading-tight mb-1.5 truncate">
                             {product.title}
                           </h3>
-                          <div className="flex items-center gap-2">
-                            <Star size={10} className="text-brand-tan fill-brand-tan" />
-                            <span className="text-[9px] text-brand-gray-400 font-mono tracking-tighter">{product.rating?.toFixed(1)} / 5.0</span>
+                          <div className="flex items-center gap-3 text-[9px] font-mono tracking-tighter">
+                            <div className="flex items-center gap-2 text-brand-gray-400">
+                              <Star size={10} className="text-brand-tan fill-brand-tan" />
+                              <span>{product.rating?.toFixed(1)} / 5.0</span>
+                            </div>
+                            <div className="w-px h-2 bg-brand-gray-50/10"></div>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-1.5 h-1.5 rounded-full ${stockStatus.color}`} />
+                              <span className={`${stockStatus.textColor}`}>{stockStatus.text}</span>
+                            </div>
                           </div>
                         </div>
                         <div className="shrink-0 flex flex-col items-end">
@@ -176,7 +190,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1 min-w-0 pr-4 space-y-2">
                             <div className="h-3 bg-brand-gray-800/80 rounded w-3/4 animate-pulse"></div>
-                            <div className="h-2 bg-brand-gray-800/80 rounded w-1/2 animate-pulse"></div>
+                            <div className="flex gap-4">
+                                <div className="h-2 bg-brand-gray-800/80 rounded w-16 animate-pulse"></div>
+                                <div className="h-2 bg-brand-gray-800/80 rounded w-12 animate-pulse"></div>
+                            </div>
                         </div>
                         <div className="shrink-0">
                             <div className="h-5 bg-brand-gray-800/80 rounded w-12 animate-pulse"></div>

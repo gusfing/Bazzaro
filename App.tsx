@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
-const { BrowserRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
+const { HashRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
 import { AnimatePresence, motion } from "framer-motion";
 // Fix: Removed file extensions from local component imports
 import Navbar from './components/Navbar';
@@ -209,13 +209,13 @@ const App: React.FC = () => {
   const [isPreloading, setIsPreloading] = useState(true);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ScrollToTop />
       {isPreloading && <Preloader onComplete={() => setIsPreloading(false)} />}
       <div className={`transition-opacity duration-1000 ${isPreloading ? 'opacity-0' : 'opacity-100'}`}>
         {!isPreloading && <AppContent />}
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
