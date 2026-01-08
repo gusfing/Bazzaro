@@ -47,7 +47,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose }) => {
           {/* Header */}
           <div className="flex-shrink-0 p-6 flex justify-between items-center">
              <div className="ui-card-light px-5 py-3.5 flex flex-col items-center justify-center leading-none">
-                <img src="BAZZARO DARK LOGO (1).png" alt="BAZZARO" className="h-4 w-auto object-contain" />
+                <img src="/BAZZARO DARK LOGO (1).png" alt="BAZZARO" className="h-4 w-auto object-contain" />
             </div>
             <button onClick={onClose} className="ui-card-light w-10 h-10 flex items-center justify-center active:scale-90 transition-transform shadow-xl">
               <X size={20} strokeWidth={1.5} />

@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible }) => {
           {/* Logo Section */}
           <Link to="/" className="ui-card-light px-6 py-4 flex items-center justify-center shadow-2xl active:scale-95 transition-transform">
             <img 
-              src="BAZZARO DARK LOGO (1).png" 
+              src="/BAZZARO DARK LOGO (1).png" 
               alt="BAZZARO" 
               className="h-4 md:h-5 w-auto object-contain" 
             />

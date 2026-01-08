@@ -58,7 +58,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       <div className={`relative z-10 px-6 py-6 flex justify-between items-center transition-all duration-700 ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}>
         <div className="ui-card-light px-5 py-3.5 flex flex-col items-center justify-center leading-none">
           <img 
-            src="BAZZARO DARK LOGO (1).png" 
+            src="/BAZZARO DARK LOGO (1).png" 
             alt="BAZZARO" 
             className="h-4 w-auto object-contain" 
           />
