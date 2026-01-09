@@ -8,6 +8,8 @@ import { ArrowRight, Globe, ShieldCheck, Instagram, Layers, Eye, Box, Scissors, 
 // Fix: Removed file extensions from local component imports
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, MOCK_INSTAGRAM_POSTS, MOCK_BLOG_POSTS } from '../constants';
 import ProductCard from '../components/ProductCard';
+import ImageGridScroller from '../components/ImageGridScroller';
+import BrandStorySection from '../components/BrandStorySection';
 import { Product, ProductVariant } from '../types';
 
 interface HomeProps {
@@ -17,8 +19,38 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }) => {
+  useEffect(() => {
+    const pageTitle = 'Bazzaro | Objects of Desire';
+    const pageDescription = 'A curated archive where architectural precision meets timeless form. Each piece is a quiet statement, crafted for the discerning individual.';
+    
+    document.title = pageTitle;
+    
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.origin);
+    }
+  }, []);
+  
   const featuredProducts = MOCK_PRODUCTS.slice(0, 8);
   const featuredSatchel = MOCK_PRODUCTS.find(p => p.slug === 'sculptural-satchel');
+
+  const gridImageSets = [
+    [ // First page/grid
+        { id: 'g1', url: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800', alt: 'A person holding a black leather bag' },
+        { id: 'g2', url: 'https://images.unsplash.com/photo-1559563458-52792b35588f?auto=format&fit=crop&q=80&w=800', alt: 'A woman in a stylish outfit with a handbag' },
+        { id: 'g3', url: 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', alt: 'Close-up of a designer bag on a chair' },
+        { id: 'g4', url: 'https://images.unsplash.com/photo-1599371300803-344436254b42?auto=format&fit=crop&q=80&w=800', alt: 'A collection of luxury bags on display' },
+    ],
+    [ // Second page/grid
+        { id: 'g5', url: 'https://images.unsplash.com/photo-1579631383387-9257007567b5?auto=format&fit=crop&q=80&w=800', alt: 'Stylish woman with a bag' },
+        { id: 'g6', url: 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a?auto=format&fit=crop&q=80&w=800', alt: 'A handbag on a textured surface' },
+        { id: 'g7', url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', alt: 'A brown tote bag' },
+        { id: 'g8', url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=800', alt: 'A cream colored tote bag' },
+    ]
+  ];
+  const gridCaption = "Designed to fit into real days. Our objects are companions for life in motion, blending seamlessly with the rhythm of your routine.";
 
   return (
     <div className="w-full overflow-hidden bg-brand-gray-950">
@@ -154,6 +186,12 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
         <div className="px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">{MOCK_PRODUCTS.slice(4, 12).map((p, idx) => (<div key={p.id} className={idx % 2 !== 0 ? 'mt-12 md:mt-0' : ''}><ProductCard product={p} onAddToCart={onAddToCart} toggleWishlist={toggleWishlist} isWishlisted={isWishlisted(p.id)} /></div>))}</div>
         <div className="mt-20 flex justify-center px-10 md:px-12"><Link to="/shop" className="w-full max-w-screen-md flex items-center justify-between px-10 py-8 border border-brand-gray-800 rounded-[2.5rem] group hover:bg-brand-gray-50 hover:text-brand-gray-950 transition-all"><span className="text-[10px] font-black uppercase tracking-[0.5em]">Explore Full Archive</span><MoveRight className="group-hover:translate-x-2 transition-transform" /></Link></div>
       </section>
+
+      {/* NEW IMAGE GRID SCROLLER */}
+      <ImageGridScroller imageSets={gridImageSets} caption={gridCaption} />
+
+      {/* BRAND STORY SECTION */}
+      <BrandStorySection />
 
       {/* EDITORIAL SECTION */}
       <section className="py-24 bg-brand-gray-950 border-t border-brand-gray-900">

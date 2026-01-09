@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { useSearchParams } = ReactRouterDOM as any;
@@ -19,6 +19,19 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
   
   const activeCategorySlug = searchParams.get('cat');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(activeCategorySlug || null);
+  
+  useEffect(() => {
+    const activeCategory = MOCK_CATEGORIES.find(c => c.slug === selectedCategory);
+    const pageTitle = `${activeCategory ? activeCategory.name : 'The Collection'} | BAZZARO`;
+    const pageDescription = `Explore the full archive of BAZZARO objects of desire. Timeless design and artisanal craft in every piece.`;
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, [selectedCategory]);
 
   const filteredProducts = useMemo(() => {
     let products = [...MOCK_PRODUCTS];

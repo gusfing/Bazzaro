@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
@@ -13,6 +13,19 @@ const mockOrders = [
 ];
 
 const Account: React.FC = () => {
+    
+  useEffect(() => {
+    const pageTitle = 'My Archive | BAZZARO';
+    const pageDescription = 'Manage your account details, view your order history, and access your personal archive at BAZZARO.';
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-brand-gray-100 text-brand-gray-900 pt-24">
       <Breadcrumbs />

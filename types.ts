@@ -69,6 +69,9 @@ export interface Product {
   materials?: string;
   reviews?: Review[];
   faq?: { question: string; answer: string; }[];
+  benefits?: string[];
+  lifestyle_images?: string[];
+  care_instructions?: string;
 }
 
 // Blog Post Entity

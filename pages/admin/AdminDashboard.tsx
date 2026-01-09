@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Package, Users, ShoppingCart, TrendingUp, AlertCircle } from 'lucide-react';
 
 const StatCard: React.FC<{ title: string; value: string; sub: string; icon: React.ReactNode }> = ({ title, value, sub, icon }) => (
@@ -16,6 +16,10 @@ const StatCard: React.FC<{ title: string; value: string; sub: string; icon: Reac
 );
 
 const AdminDashboard: React.FC = () => {
+  useEffect(() => {
+    document.title = 'Admin Dashboard | BAZZARO';
+  }, []);
+  
   return (
     <div className="p-8">
        <div className="flex justify-between items-center mb-8">

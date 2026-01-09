@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
 
@@ -20,6 +20,10 @@ const statusColors: { [key in OrderStatus]: string } = {
 
 const AdminOrders: React.FC = () => {
     const [orders, setOrders] = useState(mockOrdersData);
+    
+    useEffect(() => {
+      document.title = 'Manage Orders | BAZZARO Admin';
+    }, []);
 
     const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
         setOrders(prevOrders => 

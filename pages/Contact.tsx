@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const InputField: React.FC<{ label: string; placeholder: string; type?: string; fullWidth?: boolean }> = ({ label, placeholder, type = "text", fullWidth }) => (
@@ -14,6 +14,19 @@ const InputField: React.FC<{ label: string; placeholder: string; type?: string; 
 );
 
 const Contact: React.FC = () => {
+    
+  useEffect(() => {
+    const pageTitle = 'Contact Us | BAZZARO';
+    const pageDescription = 'Get in touch with the BAZZARO concierge for general inquiries, press, and media. Find our studio address and contact details.';
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-brand-gray-950 text-brand-gray-50 pt-24">
       <Breadcrumbs />

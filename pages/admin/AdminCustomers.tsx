@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Mail, Phone } from 'lucide-react';
 
 const mockCustomers = [
@@ -11,6 +11,10 @@ const mockCustomers = [
 ];
 
 const AdminCustomers: React.FC = () => {
+  useEffect(() => {
+    document.title = 'Manage Customers | BAZZARO Admin';
+  }, []);
+  
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">

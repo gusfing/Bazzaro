@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-import { Heart, ArrowUpRight, Star } from 'lucide-react';
+import { Heart, Star, Plus, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Product, ProductVariant } from '../types';
 
@@ -18,6 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [activeImageUrl, setActiveImageUrl] = useState(product.image_url);
+  const [isAdded, setIsAdded] = useState(false);
 
   useEffect(() => {
     // Reset image when mouse leaves the card
@@ -28,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
 
   const stockStatus = useMemo(() => {
     const totalStock = product.variants.reduce((acc, v) => acc + v.stock_quantity, 0);
-    if (totalStock > 10) return { text: 'In Stock', color: 'bg-brand-success', textColor: 'text-brand-gray-400' };
+    if (totalStock > 10) return { text: 'In Stock', color: 'bg-brand-success', textColor: 'text-brand-success' };
     if (totalStock > 0) return { text: 'Low Stock', color: 'bg-brand-warning', textColor: 'text-brand-warning' };
     return { text: 'Out of Stock', color: 'bg-brand-error', textColor: 'text-brand-error' };
   }, [product.variants]);
@@ -52,6 +53,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
       return true;
     });
   }, [variantImages]);
+  
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const firstAvailableVariant = product.variants.find(v => v.stock_quantity > 0);
+    if (firstAvailableVariant && !isAdded) {
+      onAddToCart(product, firstAvailableVariant, 1);
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+    }
+  };
 
   const newBadgeMotionProps = {
     initial: { opacity: 0, x: -10 },
@@ -111,7 +123,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
               imageLoaded ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            <div className="w-full h-full bg-gradient-to-tr from-transparent via-brand-gray-50/5 to-transparent animate-pulse" />
+            <div className="w-full h-full bg-brand-gray-800 relative overflow-hidden shimmer" />
           </div>
 
           <AnimatePresence>
@@ -149,11 +161,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                             {product.title}
                           </h3>
                           <div className="flex items-center gap-3 text-[9px] font-mono tracking-tighter">
-                            <div className="flex items-center gap-2 text-brand-gray-400">
-                              <Star size={10} className="text-brand-tan fill-brand-tan" />
-                              <span>{product.rating?.toFixed(1)} / 5.0</span>
-                            </div>
-                            <div className="w-px h-2 bg-brand-gray-50/10"></div>
+                            {product.rating && (
+                              <>
+                                <div className="flex items-center gap-2 text-brand-gray-400">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} size={10} className={i < Math.round(product.rating!) ? "text-brand-tan fill-current" : "text-brand-gray-700 fill-current"} />
+                                    ))}
+                                  </div>
+                                  {product.reviews_count && <span className="mt-px">({product.reviews_count})</span>}
+                                </div>
+                                <div className="w-px h-2 bg-brand-gray-50/10"></div>
+                              </>
+                            )}
                             <div className="flex items-center gap-1.5">
                               <div className={`w-1.5 h-1.5 rounded-full ${stockStatus.color}`} />
                               <span className={`${stockStatus.textColor}`}>{stockStatus.text}</span>
@@ -179,9 +199,42 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                             ))}
                           </div>
                           
-                          <div className="w-10 h-10 rounded-full bg-brand-gray-900 flex items-center justify-center transition-all duration-500 group-hover:bg-brand-tan">
-                            <ArrowUpRight size={16} className="text-brand-gray-50" />
-                          </div>
+                          <button
+                            onClick={handleQuickAdd}
+                            disabled={stockStatus.text === 'Out of Stock' || isAdded}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                isAdded
+                                ? 'bg-brand-success'
+                                : stockStatus.text === 'Out of Stock'
+                                ? 'bg-brand-gray-800 cursor-not-allowed opacity-50'
+                                : 'bg-brand-gray-900 group-hover:bg-brand-tan'
+                            }`}
+                            aria-label="Quick add to cart"
+                            >
+                            <AnimatePresence mode="wait" initial={false}>
+                                {isAdded ? (
+                                <motion.div
+                                    key="check"
+                                    initial={{ scale: 0.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.5, opacity: 0 }}
+                                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                                >
+                                    <Check size={16} className="text-brand-gray-50" />
+                                </motion.div>
+                                ) : (
+                                <motion.div
+                                    key="plus"
+                                    initial={{ scale: 1, opacity: 1 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.5, opacity: 0 }}
+                                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                                >
+                                    <Plus size={16} className="text-brand-gray-50" />
+                                </motion.div>
+                                )}
+                            </AnimatePresence>
+                          </button>
                         </div>
                       </div>
                     </motion.div>
@@ -189,23 +242,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                     <motion.div key="skeleton">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1 min-w-0 pr-4 space-y-2">
-                            <div className="h-3 bg-brand-gray-800/80 rounded w-3/4 animate-pulse"></div>
+                            <div className="h-3 bg-brand-gray-800/80 rounded w-3/4 relative overflow-hidden shimmer"></div>
                             <div className="flex gap-4">
-                                <div className="h-2 bg-brand-gray-800/80 rounded w-16 animate-pulse"></div>
-                                <div className="h-2 bg-brand-gray-800/80 rounded w-12 animate-pulse"></div>
+                                <div className="h-2 bg-brand-gray-800/80 rounded w-16 relative overflow-hidden shimmer"></div>
+                                <div className="h-2 bg-brand-gray-800/80 rounded w-12 relative overflow-hidden shimmer"></div>
                             </div>
                         </div>
                         <div className="shrink-0">
-                            <div className="h-5 bg-brand-gray-800/80 rounded w-12 animate-pulse"></div>
+                            <div className="h-5 bg-brand-gray-800/80 rounded w-12 relative overflow-hidden shimmer"></div>
                         </div>
                       </div>
                       <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
                           <div className="flex justify-between items-center w-full">
                               <div className="flex gap-2.5 items-center">
-                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
-                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
+                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 relative overflow-hidden shimmer"></div>
+                                  <div className="w-3.5 h-3.5 rounded-full bg-brand-gray-800/80 relative overflow-hidden shimmer"></div>
                               </div>
-                              <div className="w-10 h-10 rounded-full bg-brand-gray-800/80 animate-pulse"></div>
+                              <div className="w-10 h-10 rounded-full bg-brand-gray-800/80 relative overflow-hidden shimmer"></div>
                           </div>
                       </div>
                     </motion.div>

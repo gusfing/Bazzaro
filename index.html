@@ -5,12 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Bazzaro | Objects of Desire</title>
+    <meta name="description" content="A complete, production-ready fashion e-commerce template featuring minimalist design, luxury brand aesthetics, and a seamless user experience.">
+    <link rel="canonical" href="https://bazzaro.example.com" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/InertiaPlugin.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+      html { scroll-behavior: smooth; }
       .stroke-text { -webkit-text-stroke: 1px currentColor; }
       ::-webkit-scrollbar { display: none; }
       body {
@@ -111,6 +114,28 @@
       .animate-pulse-dot {
         animation: pulse-dot 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      .shimmer::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          rgba(255, 255, 255, 0.04) 20%,
+          rgba(255, 255, 255, 0.08) 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 2s infinite;
+      }
     </style>
     <script>
       tailwind.config = {
@@ -170,8 +195,22 @@
       }
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "BAZZARO",
+      "url": "https://bazzaro.example.com",
+      "logo": "https://bazzaro.example.com/BAZZARO DARK LOGO (1).png",
+      "sameAs": [
+        "https://www.instagram.com/bazzaro_archive",
+        "https://twitter.com/bazzaro_archive"
+      ]
+    }
+    </script>
   </head>
   <body class="text-brand-gray-100 antialiased selection:bg-brand-tan selection:text-white noise">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>

@@ -1,9 +1,13 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MOCK_PRODUCTS } from '../../constants';
 import { Edit, Trash2, PlusCircle } from 'lucide-react';
 
 const AdminProducts: React.FC = () => {
+  useEffect(() => {
+    document.title = 'Manage Products | BAZZARO Admin';
+  }, []);
+  
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-8">

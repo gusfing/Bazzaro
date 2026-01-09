@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { useParams, useNavigate, Link } = ReactRouterDOM as any;
-import { Heart, ChevronLeft, Minus, Plus, Star, ChevronDown, Share2, ChevronRight } from 'lucide-react';
+import { Heart, ChevronLeft, Minus, Plus, Star, ChevronDown, Share2, ChevronRight, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 // Fix: Removed file extensions from local component imports
 import { MOCK_PRODUCTS, MOCK_COUPONS } from '../constants';
@@ -11,6 +11,7 @@ import { Product, ProductVariant, Review } from '../types';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CouponCard from '../components/CouponCard';
+import TrustAndSupport from '../components/TrustAndSupport';
 
 interface ProductDetailProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -116,6 +117,20 @@ const ReviewsSection: React.FC<{ product: Product }> = ({ product }) => {
   );
 }
 
+const ProductBenefits: React.FC<{ benefits: string[] }> = ({ benefits }) => (
+  <div className="my-8">
+    <h3 className="text-xs font-bold uppercase tracking-widest text-brand-gray-400 mb-4">Why You’ll Like It</h3>
+    <ul className="space-y-2">
+      {benefits.map((benefit, index) => (
+        <li key={index} className="flex items-center gap-3 text-sm text-brand-gray-300">
+          <CheckCircle size={14} className="text-brand-tan shrink-0" />
+          <span>{benefit}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 const variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? '100%' : '-100%',
@@ -165,6 +180,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
       const firstAvailable = product.variants.find(v => v.stock_quantity > 0);
       if (firstAvailable) setSelectedVariantId(firstAvailable.id);
       else setSelectedVariantId(product.variants[0]?.id || null);
+
+      const pageTitle = `${product.title} | BAZZARO`;
+      const pageDescription = product.description.substring(0, 155).trim().concat('...');
+      
+      document.title = pageTitle;
+      document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+      const canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (canonicalLink) {
+        canonicalLink.setAttribute('href', window.location.href);
+      }
     }
   }, [product]);
 
@@ -303,7 +328,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                       </div>
                   </div>
                   
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-4">
                       <div className="flex justify-between items-center gap-4">
                       <div className="flex flex-col"><span className="text-brand-gray-400 text-xs">Price</span><span className="text-brand-gray-50 text-2xl font-bold leading-none">${product.base_price.toFixed(2)}</span></div>
                       <button onClick={handleAddToCart} disabled={!selectedVariant || stockLevel === 0} className="flex-grow bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-brand-gray-50/20 disabled:opacity-40 disabled:cursor-not-allowed">Add to Cart</button>
@@ -311,8 +336,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                       <button onClick={handleBuyNow} disabled={!selectedVariant || stockLevel === 0} className="w-full bg-brand-gold text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">Buy Now</button>
                   </div>
 
+                  {product.benefits && <ProductBenefits benefits={product.benefits} />}
+
                   {applicableCoupons.length > 0 && (
-                    <div className="mb-8">
+                    <div className="my-8">
                       <h3 className="text-xs font-bold uppercase tracking-widest text-brand-gray-400 mb-4">Save extra with these offers</h3>
                       <div className="space-y-3">
                         {applicableCoupons.map(coupon => (
@@ -324,20 +351,60 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
 
                   <div>
                       <AccordionItem title="Description" defaultOpen><p>{product.description}</p></AccordionItem>
-                      {(product.materials || product.dimensions) && <AccordionItem title="Specifications"><ul className="space-y-2 list-disc list-inside"> {product.materials && <li><strong>Materials:</strong> {product.materials}</li>} {product.dimensions && <li><strong>Dimensions:</strong> {product.dimensions}</li>} </ul></AccordionItem>}
+                      {(product.materials || product.dimensions || product.care_instructions) && (
+                        <AccordionItem title="Details">
+                          <ul className="space-y-2 list-disc list-inside">
+                            {product.materials && <li><strong>Material:</strong> {product.materials}</li>}
+                            {product.dimensions && <li><strong>Size:</strong> {product.dimensions}</li>}
+                            {product.care_instructions && <li><strong>Care:</strong> {product.care_instructions}</li>}
+                          </ul>
+                        </AccordionItem>
+                      )}
                       {product.reviews && <AccordionItem title={`Reviews (${product.reviews_count})`}><ReviewsSection product={product} /></AccordionItem>}
                       {product.faq && <AccordionItem title="Common Questions"><ul className="space-y-4">{product.faq.map(f => (<li key={f.question}><strong>{f.question}</strong><p className="mt-1 text-brand-gray-500">{f.answer}</p></li>))}</ul></AccordionItem>}
-                      <AccordionItem title="Shipping & Returns"><p>Complimentary worldwide shipping. Returns accepted within 14 days of receipt.</p></AccordionItem>
                   </div>
                 </div>
             </div>
         </div>
       </div>
+      
+      {product.lifestyle_images && product.lifestyle_images.length > 0 && (
+        <section className="bg-brand-gray-950 py-24">
+            <div className="px-8 lg:px-12 max-w-screen-xl mx-auto mb-12 text-center">
+                <h2 className="font-serif text-4xl text-brand-gray-50 italic">How It's Worn</h2>
+                <p className="text-brand-gray-500 mt-2 text-sm max-w-md mx-auto">Real-life inspiration for your next Bazzaro piece.</p>
+            </div>
+            <div className="px-6 lg:px-12 max-w-screen-xl mx-auto">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-8">
+                    {product.lifestyle_images.map((url, index) => (
+                        <motion.div
+                            key={index}
+                            className={`aspect-[3/4] rounded-2xl md:rounded-[2.5rem] overflow-hidden bg-brand-espresso group ${index % 2 === 1 ? 'md:mt-16' : ''}`}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: index * 0.1 }}
+                        >
+                            <img 
+                                src={url} 
+                                alt={`Lifestyle inspiration ${index + 1}`} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
+                                loading="lazy"
+                            />
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+      )}
+
+      <TrustAndSupport />
+
       {relatedProducts.length > 0 && (
         <section className="bg-brand-gray-950 py-24">
           <div className="px-8 lg:px-12 max-w-screen-xl mx-auto mb-12"><h2 className="font-serif text-4xl text-brand-gray-50 italic">You May Also Like</h2></div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 lg:px-12 max-w-screen-xl mx-auto">
-            {relatedProducts.map((p, idx) => (
+            {relatedProducts.map((p) => (
               <div key={p.id}>
                 <ProductCard product={p} onAddToCart={onAddToCart} toggleWishlist={toggleWishlist} isWishlisted={isWishlisted(p.id)} />
               </div>

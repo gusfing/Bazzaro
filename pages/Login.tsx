@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
@@ -18,6 +18,20 @@ const InputField: React.FC<{ label: string; placeholder: string; type?: string }
 
 const Login: React.FC = () => {
     const [isLoginView, setIsLoginView] = useState(true);
+
+    useEffect(() => {
+        const pageTitle = isLoginView ? 'Secure Access | BAZZARO' : 'Create Archive | BAZZARO';
+        const pageDescription = isLoginView 
+            ? 'Sign in to access your BAZZARO account, view order history, and manage your wishlist.' 
+            : 'Create a new BAZZARO account to curate your personal archive and enjoy a seamless checkout experience.';
+        
+        document.title = pageTitle;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+        const canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (canonicalLink) {
+          canonicalLink.setAttribute('href', window.location.href);
+        }
+    }, [isLoginView]);
 
     return (
         <div className="min-h-screen bg-brand-gray-950 text-brand-gray-50 pt-24">

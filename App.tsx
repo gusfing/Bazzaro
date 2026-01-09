@@ -22,6 +22,9 @@ import NotificationHandler from './components/NotificationHandler';
 import SalesBanner from './components/SalesBanner';
 import Footer from './components/Footer';
 import { CartItem, Product, ProductVariant } from './types';
+import PageTransition from './components/PageTransition';
+import CartDrawer from './components/CartDrawer';
+import NotFound from './pages/NotFound';
 
 // Admin Imports
 import AdminLayout from './pages/admin/AdminLayout';
@@ -85,6 +88,7 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [latestOrder, setLatestOrder] = useState(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [notifications, setNotifications] = useState<{id: number, message: string}[]>([]);
@@ -130,6 +134,7 @@ const AppContent: React.FC = () => {
       }];
     });
     addNotification(`${product.title} added to bag`);
+    setIsCartDrawerOpen(true);
   };
 
   const updateCartQuantity = (variantId: string, delta: number) => {
@@ -171,36 +176,47 @@ const AppContent: React.FC = () => {
     <div className={`${isAdminRoute ? 'bg-brand-gray-100' : 'bg-brand-gray-950 min-h-screen'}`}>
       <div className={`${isAdminRoute ? '' : 'w-full bg-brand-gray-950 min-h-screen flex flex-col relative'}`}>
         {!isAdminRoute && <SalesBanner />}
-        {!isAdminRoute && <Navbar cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)} isBannerVisible={isBannerVisible} />}
+        {!isAdminRoute && <Navbar cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)} isBannerVisible={isBannerVisible} onCartClick={() => setIsCartDrawerOpen(true)} />}
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/>} />
-            <Route path="/shop" element={<Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/>} />
-            <Route path="/product/:slug" element={<ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} />} />
-            <Route path="/cart" element={<CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} />} />
-            <Route path="/checkout" element={<Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} />} />
-            <Route path="/order-success" element={<OrderSuccess order={latestOrder} />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/editorial" element={<Editorial />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/wishlist" element={<Wishlist wishlistProductIds={wishlist} onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} />} />
-            
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProducts />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="customers" element={<AdminCustomers />} />
-            </Route>
-          </Routes>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
+              <Route path="/shop" element={<PageTransition><Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
+              <Route path="/product/:slug" element={<PageTransition><ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
+              <Route path="/cart" element={<PageTransition><CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} /></PageTransition>} />
+              <Route path="/checkout" element={<PageTransition><Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} /></PageTransition>} />
+              <Route path="/order-success" element={<PageTransition><OrderSuccess order={latestOrder} /></PageTransition>} />
+              <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+              <Route path="/account" element={<PageTransition><Account /></PageTransition>} />
+              <Route path="/editorial" element={<PageTransition><Editorial /></PageTransition>} />
+              <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+              <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+              <Route path="/wishlist" element={<PageTransition><Wishlist wishlistProductIds={wishlist} onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
+              
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<PageTransition><AdminDashboard /></PageTransition>} />
+                <Route path="products" element={<PageTransition><AdminProducts /></PageTransition>} />
+                <Route path="orders" element={<PageTransition><AdminOrders /></PageTransition>} />
+                <Route path="customers" element={<PageTransition><AdminCustomers /></PageTransition>} />
+              </Route>
+              
+              <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+            </Routes>
+          </AnimatePresence>
         </main>
         {!isAdminRoute && <Footer />}
         {!isAdminRoute && (
           <NotificationHandler notifications={notifications} setNotifications={setNotifications} />
         )}
       </div>
+      <CartDrawer 
+        isOpen={isCartDrawerOpen}
+        onClose={() => setIsCartDrawerOpen(false)}
+        items={cartItems}
+        onUpdateQuantity={updateCartQuantity}
+        onRemove={removeFromCart}
+      />
     </div>
   );
 }

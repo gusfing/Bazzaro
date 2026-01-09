@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
@@ -18,6 +18,18 @@ interface WishlistProps {
 
 const Wishlist: React.FC<WishlistProps> = ({ wishlistProductIds, onAddToCart, toggleWishlist, isWishlisted }) => {
   const wishlistProducts = MOCK_PRODUCTS.filter(p => wishlistProductIds.includes(p.id));
+  
+  useEffect(() => {
+    const pageTitle = 'Your Wishlist | BAZZARO';
+    const pageDescription = 'View and manage your saved items. Keep track of the BAZZARO objects you love most.';
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, []);
 
   return (
     <div className="relative w-full min-h-screen bg-brand-gray-950 flex flex-col">

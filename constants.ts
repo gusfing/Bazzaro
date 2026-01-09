@@ -90,13 +90,23 @@ export const MOCK_PRODUCTS: Product[] = [
     materials: '100% Full-Grain Italian Leather, Unlined Suede Interior',
     dimensions: '35cm H x 45cm W x 15cm D',
     is_new: true,
+    benefits: [
+        'Comfortable for everyday carry',
+        'Works with most outfits',
+        'Doesn’t try too hard'
+    ],
+    lifestyle_images: [
+        'https://images.unsplash.com/photo-1559563458-52792b35588f?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800',
+        'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800'
+    ],
+    care_instructions: 'Wipe with a soft, dry cloth. For deeper cleaning, use a specialist leather conditioner. Avoid prolonged exposure to direct sunlight and water to maintain the integrity of the full-grain leather.',
     reviews: [
       { id: 'r1', author: 'Sophia L.', rating: 5, title: 'Perfectly understated.', content: 'The quality of the leather is exceptional. It’s my new everyday bag and it holds everything I need without feeling bulky. Truly a timeless piece.', date: '2023-10-15' },
       { id: 'r2', author: 'James K.', rating: 5, title: 'Masterpiece of minimalism.', content: 'I appreciate the raw edges and the unlined interior. It feels authentic and incredibly well-made. Worth every penny.', date: '2023-09-28' },
       { id: 'r3', author: 'Chloe R.', rating: 4, title: 'Beautiful but simple.', content: 'A gorgeous bag. My only wish is that it had a small clasp or magnet at the top, but the open design is part of its aesthetic.', date: '2023-09-12' },
     ],
     faq: [
-        { question: 'How do I care for the leather?', answer: 'Wipe with a soft, dry cloth. For deeper cleaning, use a leather conditioner. Avoid prolonged exposure to direct sunlight and water.' },
         { question: 'Is the internal pocket large enough for a phone?', answer: 'Yes, the internal pocket is designed to comfortably fit most modern smartphones, including larger models.' },
     ]
   },
@@ -118,6 +128,9 @@ export const MOCK_PRODUCTS: Product[] = [
     reviews_count: 56,
     materials: 'Box Calfskin Leather, Polished Titanium Hardware',
     dimensions: '22cm H x 28cm W x 12cm D',
+    benefits: ['Architectural statement piece', 'Detachable strap for versatile styling', 'Secure magnetic clasp closure'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1599371300803-344436254b42?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1579631383387-9257007567b5?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Handle with care. Entrust to a professional leather cleaner for maintenance. Store in the provided dust bag.',
     reviews: [
       { id: 'r4', author: 'Isabella M.', rating: 5, title: 'A work of art.', content: 'This is more than a bag; it\'s a piece of sculpture. The lines are incredible and the hardware is exquisite. I receive compliments every time I wear it.', date: '2023-11-02' },
       { id: 'r5', author: 'Ava Chen', rating: 5, title: 'Beyond expectations.', content: 'The craftsmanship is flawless. It feels incredibly luxurious and the structured shape is very sophisticated. A true investment piece.', date: '2023-10-21' },
@@ -127,35 +140,84 @@ export const MOCK_PRODUCTS: Product[] = [
       { question: 'What is Box Calfskin?', answer: 'It is a type of firm, fine-grained leather known for its smooth finish and ability to hold a rigid shape, making it ideal for structured bags.' },
     ]
   },
-  // Add other products without full reviews/faq to save space
   {
-    id: 'p2', title: 'The Neo-Backpack', slug: 'neo-backpack', description: 'Weatherproof technical fabric with magnetic closures.', base_price: 185, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p2', [{name: 'Stealth Black', hex: '#0A0A0A'}, {name: 'Ghost Gray', hex: '#A9A9A9'}]), tags: ['Techwear', 'Waterproof', 'Urban'], rating: 4.7, reviews_count: 89, is_new: true
+    id: 'p2', title: 'The Neo-Backpack', slug: 'neo-backpack', description: 'Weatherproof technical fabric with magnetic closures.', base_price: 185, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p2', [{name: 'Stealth Black', hex: '#0A0A0A'}, {name: 'Ghost Gray', hex: '#A9A9A9'}]), tags: ['Techwear', 'Waterproof', 'Urban'], rating: 4.7, reviews_count: 89, is_new: true,
+    materials: 'Weatherproof technical fabric, AquaGuard zippers',
+    dimensions: '45cm H x 30cm W x 15cm D',
+    benefits: ['Urban-ready weatherproof design', 'Multiple compartments for organization', 'Lightweight and durable for daily commute'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1577733975221-a56708e1634b?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9e?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Spot clean with mild soap and water. Air dry.',
   },
   {
-    id: 'p4', title: 'Obsidian Pouch', slug: 'obsidian-pouch', description: 'Sleek, slim-profile evening clutch in matte finish.', base_price: 120, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p4', [{name: 'Matte Onyx', hex: '#1C1C1C'}]), tags: ['Evening', 'Matte', 'Essentials'], rating: 4.8, reviews_count: 210
+    id: 'p4', title: 'Obsidian Pouch', slug: 'obsidian-pouch', description: 'Sleek, slim-profile evening clutch in matte finish.', base_price: 120, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p4', [{name: 'Matte Onyx', hex: '#1C1C1C'}]), tags: ['Evening', 'Matte', 'Essentials'], rating: 4.8, reviews_count: 210,
+    materials: 'Matte-finish vegan leather, polished gunmetal hardware',
+    dimensions: '15cm H x 25cm W x 5cm D',
+    benefits: ['Sleek profile for evening essentials', 'Minimalist, hardware-free design', 'Fits comfortably in hand'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Wipe gently with a soft, dry cloth.',
   },
   {
-    id: 'p5', title: 'Utility Duffel', slug: 'utility-duffel', description: 'Oversized travel bag with reinforced straps.', base_price: 320, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1605309424345-3d88b4c7336a?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p5', [{name: 'Carbon', hex: '#333333'}, {name: 'Olive', hex: '#556B2F'}]), tags: ['Travel', 'Durable', 'Large'], rating: 4.6, reviews_count: 42
+    id: 'p5', title: 'Utility Duffel', slug: 'utility-duffel', description: 'Oversized travel bag with reinforced straps.', base_price: 320, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1605309424345-3d88b4c7336a?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p5', [{name: 'Carbon', hex: '#333333'}, {name: 'Olive', hex: '#556B2F'}]), tags: ['Travel', 'Durable', 'Large'], rating: 4.6, reviews_count: 42,
+    materials: 'Heavy-duty ballistic nylon, reinforced leather handles',
+    dimensions: '30cm H x 55cm W x 25cm D',
+    benefits: ['Spacious interior for weekend travel', 'Durable, abrasion-resistant fabric', 'Multiple pockets for easy access'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1616254443697-98f1f75003c4?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1605309424345-3d88b4c7336a?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Spot clean with a damp cloth. Do not machine wash.',
   },
   {
-    id: 'p6', title: 'Miniature Crossbody', slug: 'mini-crossbody', description: 'Compact essential bag with adjustable chain strap.', base_price: 160, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1610290499424-9368d374d758?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p6', [{name: 'Gold Glow', hex: '#C9A050'}, {name: 'Rose Dust', hex: '#BC8F8F'}]), tags: ['Mini', 'Summer', 'Chain'], rating: 4.9, reviews_count: 178
+    id: 'p6', title: 'Miniature Crossbody', slug: 'mini-crossbody', description: 'Compact essential bag with adjustable chain strap.', base_price: 160, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1610290499424-9368d374d758?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p6', [{name: 'Gold Glow', hex: '#C9A050'}, {name: 'Rose Dust', hex: '#BC8F8F'}]), tags: ['Mini', 'Summer', 'Chain'], rating: 4.9, reviews_count: 178,
+    materials: 'Saffiano-textured leather, gold-tone chain strap',
+    dimensions: '12cm H x 18cm W x 6cm D',
+    benefits: ['Compact size for phone, keys, and cards', 'Elegant chain strap adds a touch of luxury', 'Perfect for hands-free convenience'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1610290499424-9368d374d758?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1559563458-52792b35588f?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Wipe with a soft cloth. Store the chain strap inside the bag to prevent scratching the leather.',
   },
   {
-    id: 'p7', title: 'Brutalist Briefcase', slug: 'brutalist-briefcase', description: 'Square-cut professional bag for the modern creative.', base_price: 380, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p7', [{name: 'Steel', hex: '#708090'}]), tags: ['Professional', 'Unisex', 'Architecture'], rating: 4.7, reviews_count: 29
+    id: 'p7', title: 'Brutalist Briefcase', slug: 'brutalist-briefcase', description: 'Square-cut professional bag for the modern creative.', base_price: 380, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p7', [{name: 'Steel', hex: '#708090'}]), tags: ['Professional', 'Unisex', 'Architecture'], rating: 4.7, reviews_count: 29,
+    materials: 'Structured Italian leather, stainless steel hardware',
+    dimensions: '28cm H x 38cm W x 8cm D',
+    benefits: ['Fits a 15" laptop and documents', 'Modern, architectural silhouette', 'Detachable shoulder strap for comfort'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Use a specialist leather conditioner. Avoid prolonged exposure to direct sunlight.',
   },
   {
-    id: 'p8', title: 'Cloud Tote', slug: 'cloud-tote', description: 'Padded, ultra-lightweight fabric tote for daily use.', base_price: 95, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1606170033648-5d55a3df3045?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p8', [{name: 'White Cloud', hex: '#FFFFFF'}, {name: 'Soft Blue', hex: '#ADD8E6'}]), tags: ['Lightweight', 'Everyday', 'Padded'], rating: 4.5, reviews_count: 312
+    id: 'p8', title: 'Cloud Tote', slug: 'cloud-tote', description: 'Padded, ultra-lightweight fabric tote for daily use.', base_price: 95, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1606170033648-5d55a3df3045?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p8', [{name: 'White Cloud', hex: '#FFFFFF'}, {name: 'Soft Blue', hex: '#ADD8E6'}]), tags: ['Lightweight', 'Everyday', 'Padded'], rating: 4.5, reviews_count: 312,
+    materials: 'Padded nylon fabric, lightweight construction',
+    dimensions: '40cm H x 50cm W x 20cm D',
+    benefits: ['Ultra-lightweight for effortless carry', 'Puffy, cloud-like texture', 'Spacious enough for daily essentials and more'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1606170033648-5d55a3df3045?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Gentle machine wash cold, or hand wash. Lay flat to dry.',
   },
   {
-    id: 'p9', title: 'Architectural Sling', slug: 'architectural-sling', description: 'Sharp-angled crossbody bag with hidden compartments.', base_price: 210, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1591561954555-607ef358dcc2?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p9', [{name: 'Ash', hex: '#B2B2B2'}, {name: 'Charcoal', hex: '#363636'}]), tags: ['Sling', 'Geometric', 'Modern'], rating: 4.8, reviews_count: 67
+    id: 'p9', title: 'Architectural Sling', slug: 'architectural-sling', description: 'Sharp-angled crossbody bag with hidden compartments.', base_price: 210, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1591561954555-607ef358dcc2?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p9', [{name: 'Ash', hex: '#B2B2B2'}, {name: 'Charcoal', hex: '#363636'}]), tags: ['Sling', 'Geometric', 'Modern'], rating: 4.8, reviews_count: 67,
+    materials: 'Smooth full-grain leather, concealed magnetic closures',
+    dimensions: '18cm H x 30cm W x 10cm D',
+    benefits: ['Unique geometric design', 'Multiple hidden compartments for security', 'Adjustable strap for a perfect fit'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1591561954555-607ef358dcc2?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Wipe with a soft, dry cloth. For deeper cleaning, use a specialist leather conditioner.',
   },
   {
-    id: 'p10', title: 'Canvas Monolith Tote', slug: 'canvas-monolith', description: 'Heavyweight waxed canvas tote with industrial rivets.', base_price: 145, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p10', [{name: 'Ecru', hex: '#F0EAD6'}, {name: 'Slate', hex: '#708090'}]), tags: ['Canvas', 'Industrial', 'Oversized'], rating: 4.7, reviews_count: 142
+    id: 'p10', title: 'Canvas Monolith Tote', slug: 'canvas-monolith', description: 'Heavyweight waxed canvas tote with industrial rivets.', base_price: 145, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p10', [{name: 'Ecru', hex: '#F0EAD6'}, {name: 'Slate', hex: '#708090'}]), tags: ['Canvas', 'Industrial', 'Oversized'], rating: 4.7, reviews_count: 142,
+    materials: '18oz waxed canvas, copper rivets, leather trim',
+    dimensions: '40cm H x 55cm W x 18cm D',
+    benefits: ['Extremely durable and water-resistant', 'Develops a unique patina over time', 'Large capacity for versatile use'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Do not wash or dry clean. Use a soft brush to clean. Re-wax as needed to maintain water resistance.',
   },
   {
-    id: 'p11', title: 'Modular Commuter', slug: 'modular-commuter', description: 'Technical backpack with detachable utility pouches.', base_price: 265, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1581605405669-fcdf81165afa?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p11', [{name: 'Nightshade', hex: '#1C1C1C'}, {name: 'Tundra', hex: '#EAEAEA'}]), tags: ['Technical', 'Modular', 'Work'], rating: 4.9, reviews_count: 31
+    id: 'p11', title: 'Modular Commuter', slug: 'modular-commuter', description: 'Technical backpack with detachable utility pouches.', base_price: 265, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1581605405669-fcdf81165afa?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p11', [{name: 'Nightshade', hex: '#1C1C1C'}, {name: 'Tundra', hex: '#EAEAEA'}]), tags: ['Technical', 'Modular', 'Work'], rating: 4.9, reviews_count: 31,
+    materials: 'CORDURA® ballistic fabric, Fidlock® magnetic buckles',
+    dimensions: '48cm H x 32cm W x 16cm D',
+    benefits: ['Modular pouches for customizable organization', 'Highly durable and weather-resistant', 'Padded laptop compartment (up to 16")'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1581605405669-fcdf81165afa?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Spot clean with a damp cloth. Do not use detergents.',
   },
   {
-    id: 'p12', title: 'Geometric Frame Clutch', slug: 'geometric-frame-clutch', description: 'Hard-shell clutch with an asymmetrical clasp.', base_price: 340, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p12', [{name: 'Obsidian', hex: '#000000'}, {name: 'Bone', hex: '#E3DAC9'}]), tags: ['Evening', 'Structured', 'Artistic'], rating: 5.0, reviews_count: 24
+    id: 'p12', title: 'Geometric Frame Clutch', slug: 'geometric-frame-clutch', description: 'Hard-shell clutch with an asymmetrical clasp.', base_price: 340, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', other_images: [], is_active: true, variants: createVariants('p12', [{name: 'Obsidian', hex: '#000000'}, {name: 'Bone', hex: '#E3DAC9'}]), tags: ['Evening', 'Structured', 'Artistic'], rating: 5.0, reviews_count: 24,
+    materials: 'Polished acrylic hard-shell, satin lining',
+    dimensions: '12cm H x 20cm W x 5cm D',
+    benefits: ['A sculptural, artistic statement piece', 'Unique asymmetrical clasp', 'Protective hard-shell case for your essentials'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b?auto=format&fit=crop&q=80&w=800'],
+    care_instructions: 'Wipe with a soft, lint-free cloth. Avoid contact with harsh chemicals or abrasive surfaces.',
   },
 ];

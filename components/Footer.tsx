@@ -3,78 +3,100 @@ import React from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-
+import { ArrowRight, Instagram, Twitter } from 'lucide-react';
+import { MOCK_CATEGORIES } from '../constants';
 
 const Footer: React.FC = () => {
+  const companyLinks = [
+    { label: 'About', path: '/about' },
+    { label: 'Editorial', path: '/editorial' },
+    { label: 'Contact', path: '/contact' },
+  ];
+
+  const supportLinks = [
+    { label: 'Shipping & Returns', path: '/contact' },
+    { label: 'Privacy Policy', path: '/contact' },
+    { label: 'Terms of Service', path: '/contact' },
+  ];
+
+  const categoryLinks = MOCK_CATEGORIES.map(cat => ({
+      label: cat.name,
+      path: `/shop?cat=${cat.slug}`
+  }));
+
+  const FooterLinkColumn: React.FC<{title: string, links: {label: string, path: string}[]}> = ({ title, links }) => (
+    <div>
+      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-gray-50 mb-6">{title}</h3>
+      <ul className="space-y-4">
+        {links.map(link => (
+          <li key={link.label}>
+            <Link to={link.path} className="text-xs text-brand-gray-400 hover:text-brand-gray-50 transition-colors">
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
-    <footer className="relative w-full bg-brand-gray-950 text-white overflow-hidden mt-auto">
-      {/* Background Image & Gradient Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1519638399535-1b036603ac77?auto=format&fit=crop&q=80&w=1920" 
-          alt="Starry night over mountains" 
-          className="w-full h-full object-cover opacity-20" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-gray-950 via-brand-gray-950/90 to-transparent"></div>
-      </div>
-
-      {/* Large Background Text */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none z-0">
-        <h1 className="text-[25vw] lg:text-[20vw] font-serif font-bold leading-none text-gradient-bazzaro select-none">
-          BAZZARO
-        </h1>
-      </div>
-
-      <div className="relative z-10 max-w-screen-xl mx-auto px-8 lg:px-12 pt-20 pb-16">
-        {/* Top Row: Logo and Slogan */}
-        <div className="flex justify-between items-center mb-12">
-          <Link to="/" aria-label="Go to homepage">
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="hover:opacity-80 transition-opacity">
-              <circle cx="22" cy="22" r="21" stroke="white" strokeWidth="1.5"/>
-              <path d="M14 22C16.9282 17.5 27.0718 17.5 30 22C27.0718 26.5 16.9282 26.5 14 22Z" stroke="white" strokeWidth="1.5"/>
-            </svg>
-          </Link>
-          <p className="font-sans font-bold text-xs uppercase tracking-[0.4em] text-white/80">
-            Objects of Desire
-          </p>
-        </div>
-        
-        <div className="border-t border-white/10 pt-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div>
-                    <h4 className="font-sans text-sm font-bold uppercase tracking-widest mb-4 text-white/90">Menu</h4>
-                    <ul className="space-y-3 text-white/60">
-                        <li><Link to="/shop" className="hover:text-white transition-colors duration-300">Archive</Link></li>
-                        <li><Link to="/about" className="hover:text-white transition-colors duration-300">About</Link></li>
-                        <li><Link to="/editorial" className="hover:text-white transition-colors duration-300">Editorial</Link></li>
-                        <li><Link to="/contact" className="hover:text-white transition-colors duration-300">Contact</Link></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 className="font-sans text-sm font-bold uppercase tracking-widest mb-4 text-white/90">Socials</h4>
-                    <ul className="space-y-3 text-white/60">
-                        <li><a href="#" className="hover:text-white transition-colors duration-300">Instagram</a></li>
-                        <li><a href="#" className="hover:text-white transition-colors duration-300">Twitter</a></li>
-                        <li><a href="#" className="hover:text-white transition-colors duration-300">Pinterest</a></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 className="font-sans text-sm font-bold uppercase tracking-widest mb-4 text-white/90">Resources</h4>
-                     <ul className="space-y-3 text-white/60 mb-6">
-                        <li><Link to="/contact" className="hover:text-white transition-colors duration-300">Support</Link></li>
-                        <li><Link to="/contact" className="hover:text-white transition-colors duration-300">Logistics</Link></li>
-                     </ul>
-                    <Link to="/contact">
-                        <button className="px-5 py-2 border border-white/40 rounded-full text-xs font-semibold hover:bg-white hover:text-black transition-colors duration-300">
-                            Send a message
-                        </button>
-                    </Link>
-                </div>
+    <footer className="w-full bg-brand-gray-950 text-brand-gray-400 border-t border-brand-gray-800">
+      <div className="max-w-screen-xl mx-auto px-8 lg:px-12 pt-24 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+          {/* Brand Column */}
+          <div className="lg:col-span-1">
+            <Link to="/" className="mb-6 inline-block">
+               <img 
+                src="/BAZZARO DARK LOGO (1).png" 
+                alt="BAZZARO" 
+                className="h-5 w-auto object-contain" 
+              />
+            </Link>
+            <p className="text-xs leading-relaxed mb-6">
+              Objects of intent, crafted for the discerning individual.
+            </p>
+            <div className="flex items-center gap-6">
+              <a href="#" aria-label="Instagram" className="text-brand-gray-500 hover:text-brand-gray-50 transition-colors"><Instagram size={18} /></a>
+              <a href="#" aria-label="Twitter" className="text-brand-gray-500 hover:text-brand-gray-50 transition-colors"><Twitter size={18} /></a>
             </div>
+          </div>
+
+          {/* Links Columns */}
+          <div className="lg:col-start-2 lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-8">
+            <FooterLinkColumn title="Archive" links={categoryLinks} />
+            <FooterLinkColumn title="Company" links={companyLinks} />
+            <FooterLinkColumn title="Support" links={supportLinks} />
+          </div>
+
+          {/* Newsletter Column */}
+          <div className="lg:col-start-4">
+             <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-gray-50 mb-6">Join the Archive</h3>
+             <p className="text-xs leading-relaxed mb-6">
+              Receive exclusive access to new objects, private sales, and stories from our studio.
+            </p>
+            <form onSubmit={(e) => e.preventDefault()} className="relative">
+              <input 
+                type="email"
+                placeholder="Your email address"
+                className="w-full bg-transparent border-b border-brand-gray-800 focus:border-brand-tan py-3 text-brand-gray-50 text-sm focus:outline-none transition-all placeholder:text-brand-gray-600"
+              />
+              <button 
+                type="submit"
+                className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-brand-gray-400 hover:text-brand-gray-50 transition-colors"
+                aria-label="Subscribe to newsletter"
+              >
+                <ArrowRight size={20} />
+              </button>
+            </form>
+          </div>
         </div>
-        
-        <div className="text-center text-white/30 text-[10px] tracking-widest mt-24">
-          © 2025 BAZZARO. ALL RIGHTS RESERVED.
+
+        {/* Bottom Bar */}
+        <div className="border-t border-brand-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-brand-gray-600">
+            &copy; {new Date().getFullYear()} BAZZARO. Objects of Desire.
+          </p>
+          <p className="text-xs text-brand-gray-600">Milan, Italy</p>
         </div>
       </div>
     </footer>

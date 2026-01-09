@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
@@ -7,6 +7,19 @@ import { ArrowRight } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const About: React.FC = () => {
+    
+  useEffect(() => {
+    const pageTitle = 'About Us | BAZZARO';
+    const pageDescription = 'Learn about the BAZZARO philosophy. Discover our dedication to architectural form, artisanal craft, and objects of intent.';
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-brand-gray-950 text-brand-gray-50 pt-24">
       <Breadcrumbs />

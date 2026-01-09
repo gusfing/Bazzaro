@@ -31,6 +31,18 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   useEffect(() => {
+    const pageTitle = 'Shopping Bag | BAZZARO';
+    const pageDescription = 'Review the items in your shopping bag and proceed to a secure checkout.';
+    
+    document.title = pageTitle;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute('href', window.location.href);
+    }
+  }, []);
+
+  useEffect(() => {
     if (items.length === 0) {
         sessionStorage.removeItem('cartExpiryTimestamp');
         return;

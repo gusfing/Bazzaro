@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link, Navigate } = ReactRouterDOM as any;
@@ -18,6 +18,20 @@ interface OrderSuccessProps {
 }
 
 const OrderSuccess: React.FC<OrderSuccessProps> = ({ order }) => {
+
+  useEffect(() => {
+    if (order) {
+      const pageTitle = `Order ${order.id} Confirmed | BAZZARO`;
+      const pageDescription = 'Thank you for your purchase. Your order has been placed successfully and is being processed.';
+      
+      document.title = pageTitle;
+      document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+      const canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (canonicalLink) {
+        canonicalLink.setAttribute('href', window.location.href);
+      }
+    }
+  }, [order]);
 
   if (!order) {
     return <Navigate to="/" replace />;
