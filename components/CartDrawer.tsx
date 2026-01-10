@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
@@ -17,6 +17,15 @@ interface CartDrawerProps {
 
 const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdateQuantity, onRemove }) => {
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  
+  const [isDesktop, setIsDesktop] = useState(window.matchMedia('(min-width: 768px)').matches);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    const handler = () => setIsDesktop(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
 
   const backdropVariants = {
     open: { opacity: 1 },
@@ -24,8 +33,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
   };
 
   const drawerVariants = {
-    open: { y: 0 },
-    closed: { y: '100%' },
+    open: { x: 0, y: 0, transition: { type: 'spring', stiffness: 400, damping: 40 } },
+    closed: { 
+        x: isDesktop ? '100%' : 0,
+        y: isDesktop ? 0 : '100%',
+        transition: { type: 'spring', stiffness: 400, damping: 40 } 
+    }
   };
 
   const itemVariants = {
@@ -43,6 +56,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
             initial="closed"
             animate="open"
             exit="closed"
+            transition={{ duration: 0.3 }}
             onClick={onClose}
             className="fixed inset-0 bg-brand-gray-950/50 backdrop-blur-md z-[80]"
           />
@@ -52,11 +66,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
             initial="closed"
             animate="open"
             exit="closed"
-            transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-            className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white z-[90] rounded-t-[2rem] flex flex-col max-h-[85vh] shadow-2xl"
+            className="fixed bg-white z-[90] flex flex-col shadow-2xl overflow-hidden
+                       bottom-0 left-0 right-0 h-[90vh] rounded-t-3xl 
+                       md:top-0 md:right-0 md:bottom-auto md:left-auto md:h-screen md:w-full md:max-w-md md:rounded-none"
           >
-            <div className="w-12 h-1.5 bg-brand-gray-200 rounded-full mx-auto mt-3" />
-            <div className="px-6 py-4 flex justify-between items-center border-b border-brand-gray-200">
+            <div className="w-12 h-1.5 bg-brand-gray-300 rounded-full mx-auto my-3 md:hidden" />
+            <div className="px-6 py-2 md:py-4 flex justify-between items-center border-b border-brand-gray-200">
               <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-brand-gray-900">Bag</h2>
               <button onClick={onClose} className="p-2 text-brand-gray-400 hover:text-brand-gray-900 rounded-full transition-colors">
                 <X size={20} />

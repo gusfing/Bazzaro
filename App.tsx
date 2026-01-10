@@ -25,6 +25,7 @@ import { CartItem, Product, ProductVariant } from './types';
 import PageTransition from './components/PageTransition';
 import CartDrawer from './components/CartDrawer';
 import NotFound from './pages/NotFound';
+import WelcomePopup from './components/WelcomePopup';
 
 // Admin Imports
 import AdminLayout from './pages/admin/AdminLayout';
@@ -32,6 +33,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminCartAbandonment from './pages/admin/AdminCartAbandonment';
 
 
 const ScrollToTop = () => {
@@ -182,7 +184,7 @@ const AppContent: React.FC = () => {
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
               <Route path="/shop" element={<PageTransition><Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
-              <Route path="/product/:slug" element={<PageTransition><ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
+              <Route path="/products/:slug" element={<PageTransition><ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
               <Route path="/cart" element={<PageTransition><CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} /></PageTransition>} />
               <Route path="/checkout" element={<PageTransition><Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} /></PageTransition>} />
               <Route path="/order-success" element={<PageTransition><OrderSuccess order={latestOrder} /></PageTransition>} />
@@ -199,6 +201,7 @@ const AppContent: React.FC = () => {
                 <Route path="products" element={<PageTransition><AdminProducts /></PageTransition>} />
                 <Route path="orders" element={<PageTransition><AdminOrders /></PageTransition>} />
                 <Route path="customers" element={<PageTransition><AdminCustomers /></PageTransition>} />
+                <Route path="cart-abandonment" element={<PageTransition><AdminCartAbandonment /></PageTransition>} />
               </Route>
               
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
@@ -217,6 +220,7 @@ const AppContent: React.FC = () => {
         onUpdateQuantity={updateCartQuantity}
         onRemove={removeFromCart}
       />
+      {!isAdminRoute && <WelcomePopup addNotification={addNotification} />}
     </div>
   );
 }

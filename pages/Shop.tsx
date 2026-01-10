@@ -14,14 +14,18 @@ interface ShopProps {
   isWishlisted: (productId: string) => boolean;
 }
 
+const PRODUCTS_PER_PAGE = 8;
+
 const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }) => {
   const [searchParams] = useSearchParams();
   
   const activeCategorySlug = searchParams.get('cat');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(activeCategorySlug || null);
+  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
   
+  const activeCategory = useMemo(() => MOCK_CATEGORIES.find(c => c.slug === selectedCategory), [selectedCategory]);
+
   useEffect(() => {
-    const activeCategory = MOCK_CATEGORIES.find(c => c.slug === selectedCategory);
     const pageTitle = `${activeCategory ? activeCategory.name : 'The Collection'} | BAZZARO`;
     const pageDescription = `Explore the full archive of BAZZARO objects of desire. Timeless design and artisanal craft in every piece.`;
     
@@ -31,7 +35,7 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
     if (canonicalLink) {
       canonicalLink.setAttribute('href', window.location.href);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, activeCategory]);
 
   const filteredProducts = useMemo(() => {
     let products = [...MOCK_PRODUCTS];
@@ -42,13 +46,32 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
     return products;
   }, [selectedCategory]);
 
+  useEffect(() => {
+    // Reset visible count when category changes
+    setVisibleCount(PRODUCTS_PER_PAGE);
+  }, [selectedCategory]);
+  
+  const visibleProducts = useMemo(() => {
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+  
+  const handleLoadMore = () => {
+    setVisibleCount(prevCount => prevCount + PRODUCTS_PER_PAGE);
+  };
+
+  const canLoadMore = visibleCount < filteredProducts.length;
+
   return (
     <div className="relative w-full min-h-screen bg-brand-gray-950 flex flex-col">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.015] select-none">
-        <h2 className="text-[35vw] font-serif italic font-bold whitespace-nowrap leading-none stroke-text">ARCHIVE</h2>
+      <div className="relative h-64 md:h-80 bg-brand-espresso w-full pt-24">
+        <img src={activeCategory?.image_url || 'https://images.unsplash.com/photo-1599371300803-344436254b42?auto=format&fit=crop&q=80&w=1920'} alt={activeCategory?.name || 'The Collection'} className="absolute inset-0 w-full h-full object-cover opacity-30"/>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-brand-gray-50 z-10 p-4 pt-24">
+          <h1 className="font-serif text-5xl italic">{activeCategory?.name || 'The Collection'}</h1>
+          <p className="mt-2 text-sm text-brand-gray-300">Designed for repeat use, not occasions.</p>
+        </div>
       </div>
 
-      <div className="pt-24 px-8 lg:px-12 z-30">
+      <div className="px-8 lg:px-12 z-30">
         <Breadcrumbs />
 
         <div className="flex justify-between items-end mt-4 max-w-screen-xl mx-auto">
@@ -83,7 +106,7 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
 
       <div className="flex-grow px-6 lg:px-12 py-8 z-20 max-w-screen-xl mx-auto w-full">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-8">
-          {filteredProducts.map((p, idx) => (
+          {visibleProducts.map((p, idx) => (
             <div 
               key={p.id}
               className={`${idx % 2 !== 0 ? 'mt-12' : ''} md:mt-0`}
@@ -92,6 +115,16 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             </div>
           ))}
         </div>
+        {canLoadMore && (
+          <div className="mt-16 text-center">
+            <button
+              onClick={handleLoadMore}
+              className="bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 h-14 px-10 rounded-full font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-brand-gray-50/20"
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -105,7 +105,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
         <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} strokeWidth={1.5} />
       </button>
 
-      <Link to={`/product/${product.slug}`} className="relative block">
+      <Link to={`/products/${product.slug}`} className="relative block">
         {/* New Badge */}
         {product.is_new && (
           <motion.div
@@ -131,7 +131,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
               key={activeImageUrl}
               src={activeImageUrl} 
               alt={product.title} 
-              onLoad={() => { if(activeImageUrl === product.image_url) setImageLoaded(true) }}
+              onLoad={() => { if (!imageLoaded) setImageLoaded(true); }}
               {...imageMotionProps}
               style={{ scale: isHovered ? 1.1 : 1, transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
               className="absolute inset-0 w-full h-full object-cover will-change-transform grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out" 

@@ -6,11 +6,12 @@ const { Link } = ReactRouterDOM as any;
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe, ShieldCheck, Instagram, Layers, Eye, Box, Scissors, Droplets, MoveRight, ChevronLeft, ChevronRight } from 'lucide-react';
 // Fix: Removed file extensions from local component imports
-import { MOCK_PRODUCTS, MOCK_CATEGORIES, MOCK_INSTAGRAM_POSTS, MOCK_BLOG_POSTS } from '../constants';
+import { MOCK_PRODUCTS, MOCK_CATEGORIES, MOCK_INSTAGRAM_POSTS, MOCK_BLOG_POSTS, MOCK_VIDEO_REELS } from '../constants';
 import ProductCard from '../components/ProductCard';
 import ImageGridScroller from '../components/ImageGridScroller';
 import BrandStorySection from '../components/BrandStorySection';
 import { Product, ProductVariant } from '../types';
+import VideoReelScroller from '../components/VideoReelScroller';
 
 interface HomeProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -172,7 +173,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
                     <span className="text-[9px] font-black text-brand-tan uppercase tracking-[0.7em] mb-4 block">Signature Piece</span>
                     <h2 className="font-serif text-4xl lg:text-5xl text-brand-gray-50 italic mb-6">The Art of Form</h2>
                     <p className="text-brand-gray-400 mb-8 max-w-md">{featuredSatchel.description}</p>
-                    <Link to={`/product/${featuredSatchel.slug}`} className="inline-flex items-center gap-4 px-10 py-5 border border-brand-gray-800 text-brand-gray-50 rounded-full text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:bg-brand-gray-50 hover:text-brand-gray-950 active:scale-95 group">
+                    <Link to={`/products/${featuredSatchel.slug}`} className="inline-flex items-center gap-4 px-10 py-5 border border-brand-gray-800 text-brand-gray-50 rounded-full text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:bg-brand-gray-50 hover:text-brand-gray-950 active:scale-95 group">
                         View Details <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </motion.div>
@@ -186,6 +187,9 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
         <div className="px-6 md:px-12 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">{MOCK_PRODUCTS.slice(4, 12).map((p, idx) => (<div key={p.id} className={idx % 2 !== 0 ? 'mt-12 md:mt-0' : ''}><ProductCard product={p} onAddToCart={onAddToCart} toggleWishlist={toggleWishlist} isWishlisted={isWishlisted(p.id)} /></div>))}</div>
         <div className="mt-20 flex justify-center px-10 md:px-12"><Link to="/shop" className="w-full max-w-screen-md flex items-center justify-between px-10 py-8 border border-brand-gray-800 rounded-[2.5rem] group hover:bg-brand-gray-50 hover:text-brand-gray-950 transition-all"><span className="text-[10px] font-black uppercase tracking-[0.5em]">Explore Full Archive</span><MoveRight className="group-hover:translate-x-2 transition-transform" /></Link></div>
       </section>
+
+      {/* VIDEO REEL SCROLLER */}
+      <VideoReelScroller videos={MOCK_VIDEO_REELS} />
 
       {/* NEW IMAGE GRID SCROLLER */}
       <ImageGridScroller imageSets={gridImageSets} caption={gridCaption} />

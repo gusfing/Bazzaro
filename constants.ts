@@ -1,5 +1,5 @@
 
-import { Category, Product, ProductVariant, BlogPost, Review, Coupon } from './types';
+import { Category, Product, ProductVariant, BlogPost, Review, Coupon, AbandonedCart, CartItem, VideoReel } from './types';
 
 export const MOCK_CATEGORIES: Category[] = [
   { id: 'c1', name: 'Tote Bags', slug: 'totes', image_url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=800' },
@@ -56,6 +56,39 @@ export const MOCK_INSTAGRAM_POSTS = [
   { id: 'ig4', url: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800' },
   { id: 'ig5', url: 'https://images.unsplash.com/photo-1559563458-52792b35588f?auto=format&fit=crop&q=80&w=800' },
   { id: 'ig6', url: 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800' },
+];
+
+export const MOCK_VIDEO_REELS: VideoReel[] = [
+  {
+    id: 'vr1',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-striped-blouse-puts-her-bag-on-the-43574-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-in-a-striped-blouse-puts-her-bag-on-the-43574.jpg',
+    title: 'City Commute'
+  },
+  {
+    id: 'vr2',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fast-fashion-video-collage-of-a-woman-in-a-studio-34132-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-fast-fashion-video-collage-of-a-woman-in-a-studio-34132.jpg',
+    title: 'Studio Session'
+  },
+  {
+    id: 'vr3',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-in-a-gift-shop-43573-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-walking-in-a-gift-shop-43573.jpg',
+    title: 'The Selection'
+  },
+  {
+    id: 'vr4',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-black-hat-in-a-field-of-dry-flowers-39951-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-in-a-black-hat-in-a-field-of-dry-flowers-39951.jpg',
+    title: 'Autumnal Mood'
+  },
+  {
+    id: 'vr5',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-posing-for-the-camera-in-a-room-with-a-retro-ambience-39942-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-posing-for-the-camera-in-a-room-with-a-retro-ambience-39942.jpg',
+    title: 'Interior Space'
+  }
 ];
 
 const createVariants = (productId: string, colors: {name: string, hex: string}[]): ProductVariant[] => 
@@ -220,4 +253,48 @@ export const MOCK_PRODUCTS: Product[] = [
     lifestyle_images: ['https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b?auto=format&fit=crop&q=80&w=800'],
     care_instructions: 'Wipe with a soft, lint-free cloth. Avoid contact with harsh chemicals or abrasive surfaces.',
   },
+];
+
+const createCartItem = (product: Product, variantIndex: number, quantity: number): CartItem => ({
+    variantId: product.variants[variantIndex].id,
+    productId: product.id,
+    title: product.title,
+    price: product.base_price,
+    size: product.variants[variantIndex].size,
+    color: product.variants[variantIndex].color,
+    image: product.image_url,
+    quantity: quantity,
+});
+
+export const MOCK_ABANDONED_CARTS: AbandonedCart[] = [
+    {
+        id: 'ac1',
+        customerName: 'Elena V.',
+        customerPhone: '+12345678901',
+        lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        items: [createCartItem(MOCK_PRODUCTS[1], 0, 1)],
+        totalValue: MOCK_PRODUCTS[1].base_price,
+        status: 'Pending',
+    },
+    {
+        id: 'ac2',
+        customerName: 'Marcus R.',
+        customerPhone: '+19876543210',
+        lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        items: [
+            createCartItem(MOCK_PRODUCTS[0], 2, 1),
+            createCartItem(MOCK_PRODUCTS[3], 0, 1)
+        ],
+        totalValue: MOCK_PRODUCTS[0].base_price + MOCK_PRODUCTS[3].base_price,
+        status: 'Pending',
+    },
+    {
+        id: 'ac3',
+        customerName: 'Guest User',
+        customerPhone: '+15551234567',
+        lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
+        items: [createCartItem(MOCK_PRODUCTS[4], 1, 1)],
+        totalValue: MOCK_PRODUCTS[4].base_price,
+        status: 'Reminder Sent',
+    }
 ];

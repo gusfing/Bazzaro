@@ -3,7 +3,7 @@ import React from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { NavLink, Outlet, Link } = ReactRouterDOM as any;
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, ArrowLeft, History } from 'lucide-react';
 
 const AdminLayout: React.FC = () => {
   const navItems = [
@@ -11,6 +11,7 @@ const AdminLayout: React.FC = () => {
     { name: 'Products', path: '/admin/products', icon: Package },
     { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
     { name: 'Customers', path: '/admin/customers', icon: Users },
+    { name: 'Abandonment', path: '/admin/cart-abandonment', icon: History },
   ];
 
   return (

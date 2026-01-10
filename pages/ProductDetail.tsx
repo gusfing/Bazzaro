@@ -175,21 +175,60 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
     setPage([slideIndex, newDirection]);
   };
 
+  // Helper function to create/update meta tags
+  const setMetaTag = (attr: 'name' | 'property', key: string, content: string) => {
+    let element = document.querySelector(`meta[${attr}='${key}']`) as HTMLMetaElement;
+    if (!element) {
+      element = document.createElement('meta');
+      element.setAttribute(attr, key);
+      document.head.appendChild(element);
+    }
+    element.setAttribute('content', content);
+  };
+
   useEffect(() => {
     if (product) {
+      // Set default variant
       const firstAvailable = product.variants.find(v => v.stock_quantity > 0);
       if (firstAvailable) setSelectedVariantId(firstAvailable.id);
       else setSelectedVariantId(product.variants[0]?.id || null);
-
+      
+      // SEO Meta Tags
       const pageTitle = `${product.title} | BAZZARO`;
       const pageDescription = product.description.substring(0, 155).trim().concat('...');
-      
+      const pageUrl = window.location.href;
+      const imageUrl = new URL(product.image_url, window.location.origin).href;
+
+      // Standard Meta Tags
       document.title = pageTitle;
       document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+      
+      // Canonical Tag
       const canonicalLink = document.querySelector('link[rel="canonical"]');
       if (canonicalLink) {
-        canonicalLink.setAttribute('href', window.location.href);
+        canonicalLink.setAttribute('href', pageUrl);
+      } else {
+        const newCanonicalLink = document.createElement('link');
+        newCanonicalLink.rel = 'canonical';
+        newCanonicalLink.href = pageUrl;
+        document.head.appendChild(newCanonicalLink);
       }
+
+      // Open Graph / Facebook Meta Tags
+      setMetaTag('property', 'og:title', pageTitle);
+      setMetaTag('property', 'og:description', pageDescription);
+      setMetaTag('property', 'og:url', pageUrl);
+      setMetaTag('property', 'og:image', imageUrl);
+      setMetaTag('property', 'og:type', 'product');
+      setMetaTag('property', 'og:site_name', 'BAZZARO');
+      setMetaTag('property', 'product:price:amount', product.base_price.toString());
+      setMetaTag('property', 'product:price:currency', 'USD');
+
+      // Twitter Card Meta Tags
+      setMetaTag('name', 'twitter:card', 'summary_large_image');
+      setMetaTag('name', 'twitter:title', pageTitle);
+      setMetaTag('name', 'twitter:description', pageDescription);
+      setMetaTag('name', 'twitter:image', imageUrl);
     }
   }, [product]);
 
@@ -283,7 +322,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                             onClick={() => goToSlide(i)}
                             className={`w-16 h-16 rounded-xl overflow-hidden transition-all duration-300 border-2 ${imageIndex === i ? 'border-brand-gray-50 scale-110' : 'border-transparent opacity-50 hover:opacity-100'}`}
                         >
-                            <img src={img} alt={`Thumbnail ${i+1}`} className="w-full h-full object-cover" />
+                            <img src={img} alt={`${product.title} - Thumbnail ${i+1}`} className="w-full h-full object-cover" />
                         </button>
                     ))}
                 </div>
@@ -387,7 +426,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                         >
                             <img 
                                 src={url} 
-                                alt={`Lifestyle inspiration ${index + 1}`} 
+                                alt={`${product.title} - Lifestyle inspiration ${index + 1}`} 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
                                 loading="lazy"
                             />

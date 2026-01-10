@@ -133,7 +133,7 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
               }`}
               style={{animationDelay: `${idx * 0.1}s`}}
             >
-              <Link to={`/product/${MOCK_PRODUCTS.find(p => p.id === item.productId)?.slug}`} className="w-24 h-32 bg-brand-gray-900 rounded-2xl overflow-hidden shrink-0 shadow-sm transition-transform hover:scale-105">
+              <Link to={`/products/${MOCK_PRODUCTS.find(p => p.id === item.productId)?.slug}`} className="w-24 h-32 bg-brand-gray-900 rounded-2xl overflow-hidden shrink-0 shadow-sm transition-transform hover:scale-105">
                 <img src={item.image} alt={item.title} className="w-full h-full object-cover grayscale-[0.5] hover:grayscale-0 transition-all duration-700" />
               </Link>
               <div className="flex-1 flex flex-col justify-between py-1">

@@ -105,3 +105,22 @@ export interface Coupon {
   description: string;
   min_purchase?: number;
 }
+
+// Abandoned Cart Entity
+export interface AbandonedCart {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  lastActive: string; // ISO 8601 date string
+  items: CartItem[];
+  totalValue: number;
+  status: 'Pending' | 'Reminder Sent';
+}
+
+// Video Reel Entity
+export interface VideoReel {
+  id: string;
+  videoUrl: string;
+  posterUrl: string;
+  title: string;
+}

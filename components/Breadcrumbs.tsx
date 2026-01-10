@@ -15,7 +15,7 @@ const Breadcrumbs: React.FC = () => {
     const pathnames = location.pathname.split('/').filter((x) => x);
     let breadcrumbs = [{ label: 'Archive', path: '/' }];
 
-    if (location.pathname.startsWith('/product/')) {
+    if (location.pathname.startsWith('/products/')) {
       const product = MOCK_PRODUCTS.find(p => p.slug === params.slug);
       breadcrumbs.push({ label: 'Shop', path: '/shop' });
       if (product) {
