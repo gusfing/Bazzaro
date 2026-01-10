@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Bazzaro | Objects of Desire</title>
     <meta name="description" content="A complete, production-ready fashion e-commerce template featuring minimalist design, luxury brand aesthetics, and a seamless user experience.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    
     <link rel="canonical" href="https://bazzaro.example.com" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -183,18 +189,21 @@
       }
     </script>
     <script type="importmap">
-    {
-      "imports": {
-        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-        "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
-        "react/": "https://aistudiocdn.com/react@^19.2.0/",
-        "react": "https://aistudiocdn.com/react@^19.2.0",
-        "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.0",
-        "motion/react": "https://aistudiocdn.com/framer-motion@^11.0.0"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "@google/genai": "https://esm.run/@google/genai",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom/server": "https://aistudiocdn.com/react-dom@^19.2.0/server",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.0",
+    "motion/react": "https://aistudiocdn.com/framer-motion@^11.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",

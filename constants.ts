@@ -141,6 +141,7 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     faq: [
         { question: 'Is the internal pocket large enough for a phone?', answer: 'Yes, the internal pocket is designed to comfortably fit most modern smartphones, including larger models.' },
+        { question: 'How does the leather age over time?', answer: 'The full-grain Italian leather will develop a unique patina, becoming softer and richer with age and use. This is a natural characteristic of high-quality, untreated leather.' },
     ]
   },
   {
@@ -180,6 +181,10 @@ export const MOCK_PRODUCTS: Product[] = [
     benefits: ['Urban-ready weatherproof design', 'Multiple compartments for organization', 'Lightweight and durable for daily commute'],
     lifestyle_images: ['https://images.unsplash.com/photo-1577733975221-a56708e1634b?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9e?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800'],
     care_instructions: 'Spot clean with mild soap and water. Air dry.',
+    faq: [
+        { question: 'Is the laptop compartment padded?', answer: 'Yes, the Neo-Backpack features a dedicated, padded compartment that fits up to a 15-inch laptop, providing excellent protection.' },
+        { question: 'How do I clean the weatherproof fabric?', answer: 'We recommend spot cleaning with a soft cloth, mild soap, and water. Do not machine wash or use harsh detergents to preserve the fabric\'s integrity.' }
+    ]
   },
   {
     id: 'p4', title: 'Obsidian Pouch', slug: 'obsidian-pouch', description: 'Sleek, slim-profile evening clutch in matte finish.', base_price: 120, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p4', [{name: 'Matte Onyx', hex: '#1C1C1C'}]), tags: ['Evening', 'Matte', 'Essentials'], rating: 4.8, reviews_count: 210,
@@ -188,6 +193,10 @@ export const MOCK_PRODUCTS: Product[] = [
     benefits: ['Sleek profile for evening essentials', 'Minimalist, hardware-free design', 'Fits comfortably in hand'],
     lifestyle_images: ['https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d?auto=format&fit=crop&q=80&w=800'],
     care_instructions: 'Wipe gently with a soft, dry cloth.',
+    faq: [
+        { question: 'What can the Obsidian Pouch hold?', answer: 'It is designed to carry your evening essentials: a smartphone, cards, keys, and lipstick. It is not intended for bulky items.' },
+        { question: 'Does the matte finish scratch easily?', answer: 'The matte-finish vegan leather is durable for normal use, but we recommend avoiding contact with sharp or abrasive surfaces to maintain its pristine look.' }
+    ]
   },
   {
     id: 'p5', title: 'Utility Duffel', slug: 'utility-duffel', description: 'Oversized travel bag with reinforced straps.', base_price: 320, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', other_images: ['https://images.unsplash.com/photo-1605309424345-3d88b4c7336a?auto=format&fit=crop&q=80&w=800'], is_active: true, variants: createVariants('p5', [{name: 'Carbon', hex: '#333333'}, {name: 'Olive', hex: '#556B2F'}]), tags: ['Travel', 'Durable', 'Large'], rating: 4.6, reviews_count: 42,

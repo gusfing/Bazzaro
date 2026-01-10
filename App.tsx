@@ -21,11 +21,14 @@ import CartPage from './pages/Cart';
 import NotificationHandler from './components/NotificationHandler';
 import SalesBanner from './components/SalesBanner';
 import Footer from './components/Footer';
-import { CartItem, Product, ProductVariant } from './types';
+import { CartItem, Product, ProductVariant, Order } from './types';
 import PageTransition from './components/PageTransition';
 import CartDrawer from './components/CartDrawer';
 import NotFound from './pages/NotFound';
 import WelcomePopup from './components/WelcomePopup';
+import CustomTote from './pages/CustomTote';
+import SupportChatWidget from './components/SupportChatWidget';
+import MobileWelcome from './components/MobileWelcome';
 
 // Admin Imports
 import AdminLayout from './pages/admin/AdminLayout';
@@ -91,10 +94,24 @@ const AppContent: React.FC = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
-  const [latestOrder, setLatestOrder] = useState(null);
+  const [latestOrder, setLatestOrder] = useState<Order | null>(null);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [notifications, setNotifications] = useState<{id: number, message: string}[]>([]);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(25.50); // Start with a sample balance
+  const [isMobileWelcomeOpen, setIsMobileWelcomeOpen] = useState(false);
+
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const welcomeShown = sessionStorage.getItem('mobileWelcomeShown');
+    
+    if (isMobile && !welcomeShown && !isAdminRoute) {
+        const timer = setTimeout(() => {
+            setIsMobileWelcomeOpen(true);
+        }, 1500);
+        return () => clearTimeout(timer);
+    }
+  }, [isAdminRoute]);
 
   useEffect(() => {
     // This effect runs when the component mounts and determines the initial banner state.
@@ -118,6 +135,12 @@ const AppContent: React.FC = () => {
     setNotifications(prev => [...prev, { id, message }]);
   };
 
+  const handleCloseMobileWelcome = () => {
+    sessionStorage.setItem('mobileWelcomeShown', 'true');
+    setIsMobileWelcomeOpen(false);
+    addNotification("Welcome discount will be applied at checkout!");
+  };
+
   const addToCart = (product: Product, variant: ProductVariant, quantity: number) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.variantId === variant.id);
@@ -138,6 +161,12 @@ const AppContent: React.FC = () => {
     addNotification(`${product.title} added to bag`);
     setIsCartDrawerOpen(true);
   };
+  
+  const addCustomToCart = (item: Omit<CartItem, 'quantity'>) => {
+    setCartItems(prev => [...prev, { ...item, quantity: 1 }]);
+    addNotification(`${item.title} added to bag`);
+    setIsCartDrawerOpen(true);
+  };
 
   const updateCartQuantity = (variantId: string, delta: number) => {
     setCartItems(prev => prev.map(item => item.variantId === variantId ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item));
@@ -147,16 +176,20 @@ const AppContent: React.FC = () => {
     setCartItems(prev => prev.filter(item => item.variantId !== variantId));
   };
   
-  const handlePlaceOrder = () => {
-    const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const order = {
-      id: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-      items: cartItems,
-      total,
-      date: new Date().toISOString()
-    };
-    setLatestOrder(order);
+  const handlePlaceOrder = (orderData: Omit<Order, 'creditsEarned'>) => {
+    const creditsEarned = orderData.total * 0.10; // 10% cashback
+    const finalOrder = { ...orderData, creditsEarned };
+
+    setLatestOrder(finalOrder);
     setCartItems([]);
+    
+    // Update wallet balance
+    const walletCreditUsed = orderData.walletCreditUsed || 0;
+    setWalletBalance(prev => prev - walletCreditUsed + creditsEarned);
+    
+    if (creditsEarned > 0) {
+      addNotification(`You've earned $${creditsEarned.toFixed(2)} in wallet credits!`);
+    }
   };
 
   const toggleWishlist = (productId: string, productTitle: string) => {
@@ -176,6 +209,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className={`${isAdminRoute ? 'bg-brand-gray-100' : 'bg-brand-gray-950 min-h-screen'}`}>
+      {isMobileWelcomeOpen && <MobileWelcome onClose={handleCloseMobileWelcome} />}
       <div className={`${isAdminRoute ? '' : 'w-full bg-brand-gray-950 min-h-screen flex flex-col relative'}`}>
         {!isAdminRoute && <SalesBanner />}
         {!isAdminRoute && <Navbar cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)} isBannerVisible={isBannerVisible} onCartClick={() => setIsCartDrawerOpen(true)} />}
@@ -185,11 +219,12 @@ const AppContent: React.FC = () => {
               <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
               <Route path="/shop" element={<PageTransition><Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
               <Route path="/products/:slug" element={<PageTransition><ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
+              <Route path="/custom-tote" element={<PageTransition><CustomTote onAddToCart={addCustomToCart} /></PageTransition>} />
               <Route path="/cart" element={<PageTransition><CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} /></PageTransition>} />
-              <Route path="/checkout" element={<PageTransition><Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} /></PageTransition>} />
+              <Route path="/checkout" element={<PageTransition><Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} walletBalance={walletBalance} /></PageTransition>} />
               <Route path="/order-success" element={<PageTransition><OrderSuccess order={latestOrder} /></PageTransition>} />
               <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
-              <Route path="/account" element={<PageTransition><Account /></PageTransition>} />
+              <Route path="/account" element={<PageTransition><Account walletBalance={walletBalance} /></PageTransition>} />
               <Route path="/editorial" element={<PageTransition><Editorial /></PageTransition>} />
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
               <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
@@ -221,6 +256,7 @@ const AppContent: React.FC = () => {
         onRemove={removeFromCart}
       />
       {!isAdminRoute && <WelcomePopup addNotification={addNotification} />}
+      {!isAdminRoute && <SupportChatWidget />}
     </div>
   );
 }

@@ -98,6 +98,17 @@ export interface CartItem {
   quantity: number;
 }
 
+// Order Entity
+export interface Order {
+    id: string;
+    items: CartItem[];
+    total: number;
+    date: string;
+    customerName: string;
+    walletCreditUsed?: number;
+    creditsEarned?: number;
+}
+
 // Coupon Entity
 export interface Coupon {
   id: string;
@@ -123,4 +134,11 @@ export interface VideoReel {
   videoUrl: string;
   posterUrl: string;
   title: string;
+}
+
+// Chat Message Entity
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'model';
+  text: string;
 }

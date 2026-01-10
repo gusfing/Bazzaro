@@ -33,11 +33,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
   };
 
   const drawerVariants = {
-    open: { x: 0, y: 0, transition: { type: 'spring', stiffness: 400, damping: 40 } },
+    // FIX: Framer motion `type` property expects a literal type, so we cast it.
+    open: { x: 0, y: 0, transition: { type: 'spring' as const, stiffness: 400, damping: 40 } },
     closed: { 
         x: isDesktop ? '100%' : 0,
         y: isDesktop ? 0 : '100%',
-        transition: { type: 'spring', stiffness: 400, damping: 40 } 
+        // FIX: Framer motion `type` property expects a literal type, so we cast it.
+        transition: { type: 'spring' as const, stiffness: 400, damping: 40 } 
     }
   };
 

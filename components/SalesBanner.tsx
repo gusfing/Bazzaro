@@ -23,7 +23,8 @@ const SalesBanner: React.FC = () => {
     initial: { y: '-100%', opacity: 0 },
     animate: { y: 0, opacity: 1 },
     exit: { y: '-100%', opacity: 0 },
-    transition: { type: 'spring', stiffness: 200, damping: 25 },
+    // FIX: Framer motion `type` property expects a literal type, so we cast it.
+    transition: { type: 'spring' as const, stiffness: 200, damping: 25 },
   };
 
   return (

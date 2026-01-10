@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-import { User, Package, LogOut } from 'lucide-react';
+import { User, Package, LogOut, Wallet } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const mockOrders = [
@@ -12,7 +12,11 @@ const mockOrders = [
   { id: '#ORD-2755', date: 'Aug 30, 2023', total: 89.50, status: 'Delivered' },
 ];
 
-const Account: React.FC = () => {
+interface AccountProps {
+  walletBalance: number;
+}
+
+const Account: React.FC<AccountProps> = ({ walletBalance }) => {
     
   useEffect(() => {
     const pageTitle = 'My Archive | BAZZARO';
@@ -38,21 +42,31 @@ const Account: React.FC = () => {
         </header>
 
         <div className="space-y-12">
-          {/* Account Details */}
-          <section className="animate-reveal" style={{ animationDelay: '0.4s' }}>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan mb-4">Account Details</h2>
-            <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Name</span>
-                <span className="font-medium">Alex Doe</span>
+          {/* Wallet and Account Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section className="animate-reveal" style={{ animationDelay: '0.4s' }}>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan mb-4">Wallet</h2>
+              <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm flex flex-col items-center justify-center text-center h-full">
+                <Wallet size={24} className="text-brand-tan mb-4"/>
+                <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Available Credit</span>
+                <span className="font-serif italic text-4xl mt-2 text-brand-gray-900">${walletBalance.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Email</span>
-                <span className="font-medium">alex.doe@example.com</span>
+            </section>
+            <section className="animate-reveal" style={{ animationDelay: '0.5s' }}>
+              <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan mb-4">Account Details</h2>
+              <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm space-y-4 h-full flex flex-col justify-center">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Name</span>
+                  <span className="font-medium">Alex Doe</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Email</span>
+                  <span className="font-medium">alex.doe@example.com</span>
+                </div>
+                <button className="w-full text-center mt-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-tan hover:text-brand-gray-900 transition-colors pt-4 border-t border-brand-gray-100">Edit Details</button>
               </div>
-              <button className="w-full text-center mt-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-tan hover:text-brand-gray-900 transition-colors">Edit Details</button>
-            </div>
-          </section>
+            </section>
+          </div>
 
           {/* Order History */}
           <section className="animate-reveal" style={{ animationDelay: '0.6s' }}>

@@ -144,6 +144,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
 
           <div className="absolute inset-x-4 bottom-4 z-20">
             <motion.div 
+              layout
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="bg-brand-gray-950/40 text-brand-gray-50 rounded-[2.5rem] p-6 border border-brand-gray-50/10 shadow-2xl backdrop-blur-xl overflow-hidden"
             >
               <div className="relative z-10">
@@ -155,7 +157,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-start">
                         <div className="flex-1 min-w-0 pr-4">
                           <h3 className="text-[11px] font-black uppercase tracking-[0.2em] leading-tight mb-1.5 truncate">
                             {product.title}
@@ -185,58 +187,70 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                         </div>
                       </div>
 
-                      <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
-                        <div className="flex justify-between items-center w-full">
-                          <div className="flex gap-2.5 items-center">
-                            {uniqueColorVariants.slice(0, 3).map((v) => (
-                              <div 
-                                key={v.id}
-                                onMouseEnter={() => setActiveImageUrl(v.imageUrl)}
-                                className="w-3.5 h-3.5 rounded-full border border-brand-gray-50/20 shadow-inner transition-transform hover:scale-125 cursor-pointer"
-                                style={{ backgroundColor: v.hex || '#333' }}
-                                title={v.color}
-                              />
-                            ))}
-                          </div>
-                          
-                          <button
-                            onClick={handleQuickAdd}
-                            disabled={stockStatus.text === 'Out of Stock' || isAdded}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                isAdded
-                                ? 'bg-brand-success'
-                                : stockStatus.text === 'Out of Stock'
-                                ? 'bg-brand-gray-800 cursor-not-allowed opacity-50'
-                                : 'bg-brand-gray-900 group-hover:bg-brand-tan'
-                            }`}
-                            aria-label="Quick add to cart"
-                            >
-                            <AnimatePresence mode="wait" initial={false}>
-                                {isAdded ? (
-                                <motion.div
-                                    key="check"
-                                    initial={{ scale: 0.5, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    exit={{ scale: 0.5, opacity: 0 }}
-                                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                      <AnimatePresence>
+                        {isHovered && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="overflow-hidden"
+                          >
+                            <div className="border-t border-brand-gray-50/10 pt-4 mt-4 h-10 flex items-center">
+                              <div className="flex justify-between items-center w-full">
+                                <div className="flex gap-2.5 items-center">
+                                  {uniqueColorVariants.slice(0, 3).map((v) => (
+                                    <div 
+                                      key={v.id}
+                                      onMouseEnter={() => setActiveImageUrl(v.imageUrl)}
+                                      className="w-3.5 h-3.5 rounded-full border border-brand-gray-50/20 shadow-inner transition-transform hover:scale-125 cursor-pointer"
+                                      style={{ backgroundColor: v.hex || '#333' }}
+                                      title={v.color}
+                                    />
+                                  ))}
+                                </div>
+                                
+                                <button
+                                  onClick={handleQuickAdd}
+                                  disabled={stockStatus.text === 'Out of Stock' || isAdded}
+                                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                      isAdded
+                                      ? 'bg-brand-success'
+                                      : stockStatus.text === 'Out of Stock'
+                                      ? 'bg-brand-gray-800 cursor-not-allowed opacity-50'
+                                      : 'bg-brand-gray-900 group-hover:bg-brand-tan'
+                                  }`}
+                                  aria-label="Quick add to cart"
                                 >
-                                    <Check size={16} className="text-brand-gray-50" />
-                                </motion.div>
-                                ) : (
-                                <motion.div
-                                    key="plus"
-                                    initial={{ scale: 1, opacity: 1 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    exit={{ scale: 0.5, opacity: 0 }}
-                                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                                >
-                                    <Plus size={16} className="text-brand-gray-50" />
-                                </motion.div>
-                                )}
-                            </AnimatePresence>
-                          </button>
-                        </div>
-                      </div>
+                                  <AnimatePresence mode="wait" initial={false}>
+                                      {isAdded ? (
+                                      <motion.div
+                                          key="check"
+                                          initial={{ scale: 0.5, opacity: 0 }}
+                                          animate={{ scale: 1, opacity: 1 }}
+                                          exit={{ scale: 0.5, opacity: 0 }}
+                                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                                      >
+                                          <Check size={16} className="text-brand-gray-50" />
+                                      </motion.div>
+                                      ) : (
+                                      <motion.div
+                                          key="plus"
+                                          initial={{ scale: 1, opacity: 1 }}
+                                          animate={{ scale: 1, opacity: 1 }}
+                                          exit={{ scale: 0.5, opacity: 0 }}
+                                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                                      >
+                                          <Plus size={16} className="text-brand-gray-50" />
+                                      </motion.div>
+                                      )}
+                                  </AnimatePresence>
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   ) : (
                     <motion.div key="skeleton">

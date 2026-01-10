@@ -12,6 +12,7 @@ import ImageGridScroller from '../components/ImageGridScroller';
 import BrandStorySection from '../components/BrandStorySection';
 import { Product, ProductVariant } from '../types';
 import VideoReelScroller from '../components/VideoReelScroller';
+import BannerGrid from '../components/BannerGrid';
 
 interface HomeProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -52,6 +53,21 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
     ]
   ];
   const gridCaption = "Designed to fit into real days. Our objects are companions for life in motion, blending seamlessly with the rhythm of your routine.";
+  
+  const bannerData = [
+    {
+      subtitle: 'The Collection',
+      title: 'Shop The Archive',
+      imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=800',
+      linkPath: '/shop'
+    },
+    {
+      subtitle: 'The Atelier',
+      title: 'Design Your Own',
+      imageUrl: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800',
+      linkPath: '/custom-tote'
+    }
+  ];
 
   return (
     <div className="w-full overflow-hidden bg-brand-gray-950">
@@ -133,6 +149,9 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
           </motion.div>
         </div>
       </section>
+
+      {/* BANNER GRID */}
+      <BannerGrid banners={bannerData} />
 
       {/* MARQUEE */}
       <section className="bg-brand-gray-50 py-6 overflow-hidden border-y border-brand-gray-900/5">

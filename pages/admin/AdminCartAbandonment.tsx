@@ -4,6 +4,10 @@ import { MOCK_ABANDONED_CARTS } from '../../constants';
 import { AbandonedCart } from '../../types';
 import { Info, MessageSquare, Check, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { sendEmail } from '../../lib/email';
+import { renderEmail } from '../../lib/renderEmail';
+import AbandonedCartEmail from '../../components/emails/AbandonedCartEmail';
+
 
 const AdminCartAbandonment: React.FC = () => {
   const [abandonedCarts, setAbandonedCarts] = useState<AbandonedCart[]>(MOCK_ABANDONED_CARTS);
@@ -13,13 +17,21 @@ const AdminCartAbandonment: React.FC = () => {
     document.title = 'Cart Abandonment | BAZZARO Admin';
   }, []);
   
-  const handleSendReminder = (cartId: string, customerName: string) => {
+  const handleSendReminder = async (cart: AbandonedCart) => {
+    // Send abandoned cart email
+    const emailHtml = renderEmail(<AbandonedCartEmail cart={cart} />);
+    await sendEmail({
+      to: `${cart.customerName.replace(' ', '.').toLowerCase()}@example.com`,
+      subject: "You left something in your bag",
+      html: emailHtml,
+    });
+    
     setAbandonedCarts(prevCarts =>
-      prevCarts.map(cart =>
-        cart.id === cartId ? { ...cart, status: 'Reminder Sent' } : cart
+      prevCarts.map(c =>
+        c.id === cart.id ? { ...c, status: 'Reminder Sent' } : c
       )
     );
-    setNotification({ message: `Reminder sent to ${customerName}`, cartId });
+    setNotification({ message: `Reminder sent to ${cart.customerName}`, cartId: cart.id });
     setTimeout(() => setNotification(null), 3000);
   };
 
@@ -50,7 +62,7 @@ const AdminCartAbandonment: React.FC = () => {
         <Info size={20} className="flex-shrink-0 mt-0.5" />
         <div>
           <h3 className="font-bold">How to use this tool</h3>
-          <p className="mt-1">This feature simulates sending WhatsApp reminders to customers via the Meta Cloud API. Clicking 'Send Reminder' will update the status and log the action.</p>
+          <p className="mt-1">This feature simulates sending email reminders to customers. Clicking 'Send Reminder' will trigger the email service (logging to console) and update the cart status.</p>
         </div>
       </div>
       
@@ -104,7 +116,7 @@ const AdminCartAbandonment: React.FC = () => {
                         key="button"
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => handleSendReminder(cart.id, cart.customerName)}
+                        onClick={() => handleSendReminder(cart)}
                         disabled={cart.status === 'Reminder Sent'}
                         className="bg-brand-gray-900 text-brand-gray-50 px-4 py-2 text-sm font-bold uppercase rounded-lg hover:bg-brand-gray-800 transition-colors flex items-center gap-2 disabled:bg-brand-gray-300 disabled:cursor-not-allowed"
                     >

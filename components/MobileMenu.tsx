@@ -14,10 +14,12 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const mainNav = [
     { label: 'Shop', path: '/shop' },
+    { label: 'Design Your Own', path: '/custom-tote' },
     { label: 'Wishlist', path: '/wishlist' },
     { label: 'About', path: '/about' },
     { label: 'Editorial', path: '/editorial' },
     { label: 'Contact', path: '/contact' },
+    { label: 'Account', path: '/login' },
     { label: 'Admin', path: '/admin' },
   ];
 
@@ -57,14 +59,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       y: 0,
       opacity: 1,
       transition: {
-        y: { stiffness: 1000, velocity: -100 }
+        duration: 0.7,
+        // FIX: Framer motion `ease` property expects a specific tuple type for cubic-bezier, so we cast it.
+        ease: [0.22, 1, 0.36, 1] as const
       }
     },
     closed: {
-      y: 50,
+      y: 30,
       opacity: 0,
       transition: {
-        y: { stiffness: 1000 }
+        duration: 0.5,
+        // FIX: Framer motion `ease` property expects a specific tuple type for cubic-bezier, so we cast it.
+        ease: [0.22, 1, 0.36, 1] as const
       }
     }
   };
@@ -89,7 +95,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             initial="closed"
             animate="open"
             exit="closed"
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 35 }}
             className="fixed top-0 right-0 h-full w-full max-w-sm bg-brand-gray-950 z-[100] border-l border-brand-gray-800 flex flex-col"
           >
             {/* Header */}
@@ -101,7 +107,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                   className="h-5 w-auto object-contain" 
                 />
               </Link>
-              <button onClick={onClose} className="p-2 text-brand-gray-400 hover:text-brand-gray-50 transition-colors">
+              <button onClick={onClose} className="p-2 text-brand-gray-400 hover:text-brand-gray-50 transition-colors" aria-label="Close menu">
                 <X size={24} />
               </button>
             </div>

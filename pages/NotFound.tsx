@@ -1,6 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+// Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
+import * as ReactRouterDOM from 'react-router-dom';
+const { Link } = ReactRouterDOM as any;
 import { Compass } from 'lucide-react';
 
 const NotFound: React.FC = () => {

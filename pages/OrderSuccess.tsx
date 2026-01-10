@@ -3,15 +3,8 @@ import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link, Navigate } = ReactRouterDOM as any;
-import { CheckCircle } from 'lucide-react';
-import { CartItem } from '../types';
-
-interface Order {
-    id: string;
-    items: CartItem[];
-    total: number;
-    date: string;
-}
+import { CheckCircle, Star } from 'lucide-react';
+import { Order } from '../types';
 
 interface OrderSuccessProps {
   order: Order | null;
@@ -49,6 +42,15 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ order }) => {
             <p className="text-brand-gray-600 mb-2">Your order has been placed successfully.</p>
             <p className="font-bold font-mono text-lg mb-8">{order.id}</p>
           </div>
+          
+          {order.creditsEarned && order.creditsEarned > 0 && (
+             <div className="bg-brand-tan/10 border border-brand-tan/20 p-4 rounded-2xl flex items-center justify-center gap-4 mb-8 animate-reveal" style={{animationDelay: '0.1s'}}>
+                 <Star size={18} className="text-brand-tan" />
+                 <p className="text-xs font-bold text-brand-sepia">
+                     You've earned <span className="font-serif italic text-base">${order.creditsEarned.toFixed(2)}</span> in credits for your next purchase!
+                 </p>
+             </div>
+          )}
 
           <div className="bg-white p-6 rounded-3xl border border-brand-gray-200 shadow-sm text-left space-y-4 mb-12 animate-reveal" style={{animationDelay: '0.2s'}}>
               <h2 className="text-xs font-bold uppercase tracking-wider text-brand-gray-400 mb-2">Order Summary</h2>
@@ -61,9 +63,17 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ order }) => {
                       <span className="font-medium">${item.price.toFixed(2)} x {item.quantity}</span>
                   </div>
               ))}
-              <div className="border-t border-brand-gray-200 pt-4 flex justify-between items-center font-bold text-lg">
-                  <span>Total Paid</span>
-                  <span>${order.total.toFixed(2)}</span>
+              <div className="border-t border-brand-gray-200 pt-4">
+                  {order.walletCreditUsed && order.walletCreditUsed > 0 && (
+                    <div className="flex justify-between items-center text-sm mb-2 text-brand-success">
+                        <span>Wallet Credit Used</span>
+                        <span>-${order.walletCreditUsed.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center font-bold text-lg">
+                      <span>Total Paid</span>
+                      <span>${order.total.toFixed(2)}</span>
+                  </div>
               </div>
           </div>
 

@@ -12,6 +12,7 @@ import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CouponCard from '../components/CouponCard';
 import TrustAndSupport from '../components/TrustAndSupport';
+import AiStylist from '../components/AiStylist';
 
 interface ProductDetailProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -232,7 +233,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
     }
   }, [product]);
 
-  const relatedProducts = product ? MOCK_PRODUCTS.filter(p => p.category_id === product.category_id && p.id !== product.id).slice(0, 4) : [];
+  const allOtherProducts = product ? MOCK_PRODUCTS.filter(p => p.id !== product.id) : [];
+  const relatedProducts = product ? allOtherProducts.filter(p => p.category_id === product.category_id).slice(0, 4) : [];
 
   if (!product) return <div className="min-h-screen bg-brand-gray-950 flex flex-col items-center justify-center p-6 text-center"><h2 className="font-serif text-3xl mb-6">Object not found</h2><button onClick={() => navigate('/')} className="text-brand-gray-100 uppercase tracking-[0.3em] text-[11px] font-black">Return to Archive</button></div>;
 
@@ -387,6 +389,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                       </div>
                     </div>
                   )}
+
+                  <AiStylist currentProduct={product} allProducts={allOtherProducts} />
 
                   <div>
                       <AccordionItem title="Description" defaultOpen><p>{product.description}</p></AccordionItem>
