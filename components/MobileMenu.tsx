@@ -5,13 +5,15 @@ import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
 import { X, Instagram, Twitter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { User as FirebaseUser } from 'firebase/auth';
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  currentUser: FirebaseUser | null;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
+const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser }) => {
   const mainNav = [
     { label: 'Shop', path: '/shop' },
     { label: 'Design Your Own', path: '/custom-tote' },
@@ -19,7 +21,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     { label: 'About', path: '/about' },
     { label: 'Editorial', path: '/editorial' },
     { label: 'Contact', path: '/contact' },
-    { label: 'Account', path: '/login' },
+    { label: currentUser ? 'Account' : 'Login', path: currentUser ? '/account' : '/login' },
     { label: 'Admin', path: '/admin' },
   ];
 

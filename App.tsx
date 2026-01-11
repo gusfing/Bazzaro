@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 const { HashRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
 import { AnimatePresence, motion } from "framer-motion";
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth } from './lib/firebase';
 // Fix: Removed file extensions from local component imports
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -100,39 +102,46 @@ const AppContent: React.FC = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [walletBalance, setWalletBalance] = useState(2550); // Start with a sample balance
   const [isMobileWelcomeOpen, setIsMobileWelcomeOpen] = useState(false);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(window.innerWidth < 1024);
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setIsAuthLoading(false);
+    });
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+        setIsMobileOrTablet(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
     const welcomeShown = sessionStorage.getItem('mobileWelcomeShown');
-    
-    if (isMobile && !welcomeShown && !isAdminRoute) {
+    if (isMobileOrTablet && !welcomeShown && !isAdminRoute) {
         const timer = setTimeout(() => {
             setIsMobileWelcomeOpen(true);
         }, 1500);
         return () => clearTimeout(timer);
     }
-  }, [isAdminRoute]);
+  }, [isAdminRoute, isMobileOrTablet]);
 
   useEffect(() => {
-    // This effect runs when the component mounts and determines the initial banner state.
-    // It also sets up a listener for when the banner is closed.
     const isDismissed = sessionStorage.getItem('salesBannerDismissed') === 'true';
     setIsBannerVisible(!isDismissed);
-
-    const handleBannerCloseEvent = () => {
-      setIsBannerVisible(false);
-    };
-
+    const handleBannerCloseEvent = () => setIsBannerVisible(false);
     window.addEventListener('bannerClosed', handleBannerCloseEvent);
-
-    return () => {
-      window.removeEventListener('bannerClosed', handleBannerCloseEvent);
-    };
+    return () => window.removeEventListener('bannerClosed', handleBannerCloseEvent);
   }, []);
 
   const addNotification = (message: string) => {
-    const id = Date.now();
-    setNotifications(prev => [...prev, { id, message }]);
+    setNotifications(prev => [...prev, { id: Date.now(), message }]);
   };
 
   const handleCloseMobileWelcome = () => {
@@ -147,16 +156,7 @@ const AppContent: React.FC = () => {
       if (existing) {
         return prev.map(item => item.variantId === variant.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, {
-        variantId: variant.id,
-        productId: product.id,
-        title: product.title,
-        price: product.base_price,
-        size: variant.size,
-        color: variant.color,
-        image: product.image_url,
-        quantity
-      }];
+      return [...prev, { variantId: variant.id, productId: product.id, title: product.title, price: product.base_price, size: variant.size, color: variant.color, image: product.image_url, quantity }];
     });
     addNotification(`${product.title} added to bag`);
     setIsCartDrawerOpen(true);
@@ -179,14 +179,10 @@ const AppContent: React.FC = () => {
   const handlePlaceOrder = (orderData: Omit<Order, 'creditsEarned'>) => {
     const creditsEarned = orderData.total * 0.10; // 10% cashback
     const finalOrder = { ...orderData, creditsEarned };
-
     setLatestOrder(finalOrder);
     setCartItems([]);
-    
-    // Update wallet balance
     const walletCreditUsed = orderData.walletCreditUsed || 0;
     setWalletBalance(prev => prev - walletCreditUsed + creditsEarned);
-    
     if (creditsEarned > 0) {
       addNotification(`You've earned ₹${creditsEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in wallet credits!`);
     }
@@ -194,8 +190,7 @@ const AppContent: React.FC = () => {
 
   const toggleWishlist = (productId: string, productTitle: string) => {
     setWishlist(prev => {
-      const isWishlisted = prev.includes(productId);
-      if (isWishlisted) {
+      if (prev.includes(productId)) {
         addNotification(`${productTitle} removed from wishlist`);
         return prev.filter(id => id !== productId);
       } else {
@@ -207,13 +202,19 @@ const AppContent: React.FC = () => {
 
   const isProductWishlisted = (productId: string) => wishlist.includes(productId);
 
+  const AuthLoader = () => (
+    <div className="w-full flex-grow flex items-center justify-center bg-brand-gray-950 text-brand-gray-500">
+      Loading Session...
+    </div>
+  );
+
   return (
     <div className={`${isAdminRoute ? 'bg-brand-gray-100' : 'bg-brand-gray-950 min-h-screen'}`}>
       {isMobileWelcomeOpen && <MobileWelcome onClose={handleCloseMobileWelcome} />}
       <div className={`${isAdminRoute ? '' : 'w-full bg-brand-gray-950 min-h-screen flex flex-col relative'}`}>
         {!isAdminRoute && <SalesBanner />}
-        {!isAdminRoute && <Navbar cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)} isBannerVisible={isBannerVisible} onCartClick={() => setIsCartDrawerOpen(true)} />}
-        <main className="flex-grow">
+        {!isAdminRoute && <Navbar currentUser={currentUser} cartCount={cartItems.reduce((acc, i) => acc + i.quantity, 0)} isBannerVisible={isBannerVisible} onCartClick={() => setIsCartDrawerOpen(true)} />}
+        <main className="flex-grow flex flex-col">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
@@ -223,12 +224,13 @@ const AppContent: React.FC = () => {
               <Route path="/cart" element={<PageTransition><CartPage items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} /></PageTransition>} />
               <Route path="/checkout" element={<PageTransition><Checkout cartItems={cartItems} onPlaceOrder={handlePlaceOrder} addNotification={addNotification} walletBalance={walletBalance} /></PageTransition>} />
               <Route path="/order-success" element={<PageTransition><OrderSuccess order={latestOrder} /></PageTransition>} />
-              <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
-              <Route path="/account" element={<PageTransition><Account walletBalance={walletBalance} /></PageTransition>} />
               <Route path="/editorial" element={<PageTransition><Editorial /></PageTransition>} />
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
               <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
               <Route path="/wishlist" element={<PageTransition><Wishlist wishlistProductIds={wishlist} onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
+              
+              <Route path="/login" element={<PageTransition>{isAuthLoading ? <AuthLoader /> : currentUser ? <Navigate to="/account" replace /> : <Login />}</PageTransition>} />
+              <Route path="/account" element={<PageTransition>{isAuthLoading ? <AuthLoader /> : currentUser ? <Account walletBalance={walletBalance} currentUser={currentUser} /> : <Navigate to="/login" replace />}</PageTransition>} />
               
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
@@ -244,18 +246,10 @@ const AppContent: React.FC = () => {
           </AnimatePresence>
         </main>
         {!isAdminRoute && <Footer />}
-        {!isAdminRoute && (
-          <NotificationHandler notifications={notifications} setNotifications={setNotifications} />
-        )}
+        {!isAdminRoute && <NotificationHandler notifications={notifications} setNotifications={setNotifications} />}
       </div>
-      <CartDrawer 
-        isOpen={isCartDrawerOpen}
-        onClose={() => setIsCartDrawerOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={updateCartQuantity}
-        onRemove={removeFromCart}
-      />
-      {!isAdminRoute && <WelcomePopup addNotification={addNotification} />}
+      <CartDrawer isOpen={isCartDrawerOpen} onClose={() => setIsCartDrawerOpen(false)} items={cartItems} onUpdateQuantity={updateCartQuantity} onRemove={removeFromCart} />
+      {!isAdminRoute && !isMobileOrTablet && <WelcomePopup addNotification={addNotification} />}
       {!isAdminRoute && <SupportChatWidget />}
     </div>
   );

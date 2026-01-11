@@ -72,7 +72,7 @@ const WelcomePopup: React.FC<{ addNotification: (message: string) => void }> = (
             animate="open"
             exit="closed"
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:left-auto md:bottom-8 md:right-8 md:translate-x-0 md:translate-y-0 w-[calc(100vw-2rem)] sm:w-full max-w-lg z-[501]"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-auto md:left-auto md:bottom-8 md:right-8 md:translate-x-0 md:translate-y-0 w-[90vw] max-w-sm md:max-w-lg z-[501]"
           >
             <div className="relative bg-brand-gray-950 border border-brand-gray-800 rounded-3xl shadow-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center overflow-hidden">
               <button onClick={handleClose} className="absolute top-4 right-4 p-2 text-brand-gray-500 hover:text-brand-gray-50 transition-colors rounded-full z-10">
@@ -95,7 +95,7 @@ const WelcomePopup: React.FC<{ addNotification: (message: string) => void }> = (
                       transition={{ duration: 0.3 }}
                     >
                       <Gift size={24} className="text-brand-tan mb-4" />
-                      <h2 className="font-serif italic text-3xl text-brand-gray-50 mb-2">Join The Archive</h2>
+                      <h2 className="font-serif italic text-2xl sm:text-3xl text-brand-gray-50 mb-2">Join The Archive</h2>
                       <p className="text-xs text-brand-gray-400 mb-6">Subscribe to receive 10% off your first order, plus access to private sales and new objects.</p>
                       <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="relative">
@@ -123,7 +123,7 @@ const WelcomePopup: React.FC<{ addNotification: (message: string) => void }> = (
                       transition={{ duration: 0.3 }}
                     >
                       <Gift size={24} className="text-brand-success mb-4" />
-                      <h2 className="font-serif italic text-3xl text-brand-gray-50 mb-2">Welcome!</h2>
+                      <h2 className="font-serif italic text-2xl sm:text-3xl text-brand-gray-50 mb-2">Welcome!</h2>
                       <p className="text-xs text-brand-gray-400 mb-4">Your discount code is ready. Use it at checkout to enjoy 10% off your first purchase.</p>
                       
                       <div className="relative border-2 border-dashed border-brand-tan/30 rounded-lg p-4 flex items-center justify-between">

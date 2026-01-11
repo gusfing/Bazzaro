@@ -2,8 +2,10 @@
 import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
-const { Link } = ReactRouterDOM as any;
+const { Link, useNavigate } = ReactRouterDOM as any;
 import { User, Package, LogOut, Wallet } from 'lucide-react';
+import { User as FirebaseUser, signOut } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const mockOrders = [
@@ -14,9 +16,11 @@ const mockOrders = [
 
 interface AccountProps {
   walletBalance: number;
+  currentUser: FirebaseUser;
 }
 
-const Account: React.FC<AccountProps> = ({ walletBalance }) => {
+const Account: React.FC<AccountProps> = ({ walletBalance, currentUser }) => {
+  const navigate = useNavigate();
     
   useEffect(() => {
     const pageTitle = 'My Archive | BAZZARO';
@@ -24,11 +28,19 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
     
     document.title = pageTitle;
     document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
-    const canonicalLink = document.querySelector('link[rel="canonical"]');
-    if (canonicalLink) {
-      canonicalLink.setAttribute('href', window.location.href);
-    }
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate('/login');
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+  
+  const displayName = currentUser.displayName || currentUser.email || currentUser.phoneNumber || 'Valued Customer';
+  const displayEmail = currentUser.email || 'No email provided';
 
   return (
     <div className="min-h-screen bg-brand-gray-100 text-brand-gray-900 pt-24">
@@ -38,7 +50,7 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
           <h1 className="font-serif text-5xl italic animate-reveal">
             My Archive
           </h1>
-          <p className="text-brand-gray-500 animate-reveal" style={{ animationDelay: '0.2s' }}>Welcome back, Alex.</p>
+          <p className="text-brand-gray-500 animate-reveal" style={{ animationDelay: '0.2s' }}>Welcome back, {displayName.split(' ')[0]}.</p>
         </header>
 
         <div className="space-y-12">
@@ -57,11 +69,11 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
               <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm space-y-4 h-full flex flex-col justify-center">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Name</span>
-                  <span className="font-medium">Alex Doe</span>
+                  <span className="font-medium">{displayName}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Email</span>
-                  <span className="font-medium">alex.doe@example.com</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Contact</span>
+                  <span className="font-medium">{displayEmail}</span>
                 </div>
                 <button className="w-full text-center mt-4 text-[10px] font-black uppercase tracking-[0.3em] text-brand-tan hover:text-brand-gray-900 transition-colors pt-4 border-t border-brand-gray-100">Edit Details</button>
               </div>
@@ -93,10 +105,10 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
           </section>
 
           <div className="pt-8 animate-reveal" style={{ animationDelay: '0.8s' }}>
-            <Link to="/login" className="w-full flex items-center justify-center gap-3 text-center text-xs font-bold uppercase tracking-widest text-brand-gray-400 hover:text-brand-gray-900 transition-colors">
+            <button onClick={handleSignOut} className="w-full flex items-center justify-center gap-3 text-center text-xs font-bold uppercase tracking-widest text-brand-gray-400 hover:text-brand-gray-900 transition-colors">
               <LogOut size={14} />
               Sign Out
-            </Link>
+            </button>
           </div>
         </div>
       </div>

@@ -208,7 +208,14 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
       </section>
 
       {/* VIDEO REEL SCROLLER */}
-      <VideoReelScroller videos={MOCK_VIDEO_REELS} />
+      <section className="py-24 bg-brand-gray-950 border-t border-brand-gray-900 overflow-hidden">
+        <div className="px-10 lg:px-12 mb-12 text-center">
+            <span className="text-[9px] font-black text-brand-tan uppercase tracking-[0.7em] mb-4 block">Behind The Scenes</span>
+            <h2 className="font-serif text-4xl text-brand-gray-50 italic">Visual Notes</h2>
+            <p className="text-brand-gray-500 mt-2 text-sm max-w-md mx-auto">From the studio floor.</p>
+        </div>
+        <VideoReelScroller videos={MOCK_VIDEO_REELS} />
+      </section>
 
       {/* NEW IMAGE GRID SCROLLER */}
       <ImageGridScroller imageSets={gridImageSets} caption={gridCaption} />

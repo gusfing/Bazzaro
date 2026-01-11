@@ -5,6 +5,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 const { Link, useLocation } = ReactRouterDOM as any;
 import { ShoppingBag, Search, Menu, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { User as FirebaseUser } from 'firebase/auth';
 // Fix: Removed file extensions from local component imports
 import MobileMenu from './MobileMenu';
 import SearchOverlay from './SearchOverlay';
@@ -13,9 +14,10 @@ interface NavbarProps {
   cartCount: number;
   isBannerVisible: boolean;
   onCartClick: () => void;
+  currentUser: FirebaseUser | null;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick, currentUser }) => {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -82,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
             >
               <Search size={20} strokeWidth={1.5} />
             </button>
-            <Link to="/login" className="hidden lg:block text-brand-gray-300 hover:text-brand-gray-50 transition-colors" aria-label="Account">
+            <Link to={currentUser ? "/account" : "/login"} className="hidden lg:block text-brand-gray-300 hover:text-brand-gray-50 transition-colors" aria-label="Account">
               <User size={20} strokeWidth={1.5} />
             </Link>
             
@@ -118,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
         </div>
       </header>
 
-      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} currentUser={currentUser} />
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
