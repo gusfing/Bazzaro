@@ -84,7 +84,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
         setCouponDiscount(newDiscount);
         addNotification(`Coupon "${coupon.code}" applied successfully!`);
       } else {
-        addNotification(`Cart total must be at least $${coupon.min_purchase} to use this coupon.`);
+        addNotification(`Cart total must be at least ₹${coupon.min_purchase.toLocaleString('en-IN')} to use this coupon.`);
       }
     } else {
       addNotification('Invalid coupon code.');
@@ -184,13 +184,13 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                 {cartItems.map(item => (
                   <div key={item.variantId} className="flex justify-between items-center text-sm">
                     <span className="text-brand-gray-300">{item.title} x {item.quantity}</span>
-                    <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-medium">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                   </div>
                 ))}
                 <div className="border-t border-brand-gray-50/10 pt-4 space-y-2">
                     <div className="flex justify-between items-center text-sm">
                         <span className="text-brand-gray-300">Subtotal</span>
-                        <span className="font-medium">${subtotal.toFixed(2)}</span>
+                        <span className="font-medium">₹{subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     {hasWelcomeDiscount && (
                          <div className="flex justify-between items-center text-sm text-brand-success">
@@ -198,7 +198,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                                 <Gift size={14} />
                                 <span>Welcome Discount (15%)</span>
                              </div>
-                            <span className="font-medium">-${welcomeDiscountAmount.toFixed(2)}</span>
+                            <span className="font-medium">-₹{welcomeDiscountAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     )}
                     {appliedCoupon && (
@@ -208,7 +208,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                                 <span>Discount ({appliedCoupon.code})</span>
                                 <button onClick={handleRemoveCoupon}><X size={12} className="text-brand-gray-500 hover:text-white" /></button>
                              </div>
-                            <span className="font-medium">-${couponDiscount.toFixed(2)}</span>
+                            <span className="font-medium">-₹{couponDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     )}
                     {useWallet && applicableWalletCredit > 0 && (
@@ -217,7 +217,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                                 <Wallet size={14} />
                                 <span>Wallet Credit</span>
                              </div>
-                            <span className="font-medium">-${applicableWalletCredit.toFixed(2)}</span>
+                            <span className="font-medium">-₹{applicableWalletCredit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                     )}
                     <div className="flex justify-between items-center text-sm">
@@ -227,7 +227,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                 </div>
                 <div className="border-t border-brand-gray-50/10 pt-4 flex justify-between items-center font-bold text-lg">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </section>
@@ -240,7 +240,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, onPlaceOrder, addNotific
                         <div className="bg-brand-gray-50/5 border border-brand-gray-50/10 rounded-xl p-4 flex justify-between items-center">
                             <div>
                                 <p className="text-xs font-bold text-brand-gray-50 flex items-center gap-2"><Wallet size={14} className="text-brand-tan"/> Available Wallet Credit</p>
-                                <p className="font-serif italic text-lg text-brand-sand">${walletBalance.toFixed(2)}</p>
+                                <p className="font-serif italic text-lg text-brand-sand">₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                             </div>
                             <button onClick={() => setUseWallet(!useWallet)} className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${useWallet ? 'bg-brand-tan' : 'bg-brand-gray-700'}`}>
                                 <span className={`inline-block w-4 h-4 transform bg-white rounded-full transition-transform ${useWallet ? 'translate-x-6' : 'translate-x-1'}`} />

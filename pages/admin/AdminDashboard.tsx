@@ -31,7 +31,7 @@ const AdminDashboard: React.FC = () => {
 
        {/* Stats Grid */}
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-         <StatCard title="Total Sales" value="$12,450.00" sub="+15% from last month" icon={<TrendingUp size={20} />} />
+         <StatCard title="Total Sales" value="₹1,245,550" sub="+15% from last month" icon={<TrendingUp size={20} />} />
          <StatCard title="Active Orders" value="45" sub="12 pending processing" icon={<ShoppingCart size={20} />} />
          <StatCard title="Low Stock" value="3 Items" sub="Restock needed immediately" icon={<AlertCircle size={20} />} />
        </div>
@@ -58,21 +58,21 @@ const AdminDashboard: React.FC = () => {
                       <td className="px-6 py-4 font-mono text-brand-gray-600">#ORD-2931</td>
                       <td className="px-6 py-4 font-bold text-brand-gray-900">Alex Doe</td>
                       <td className="px-6 py-4 text-brand-gray-500">Oct 24, 2023</td>
-                      <td className="px-6 py-4 font-bold text-brand-gray-900">$145.00</td>
+                      <td className="px-6 py-4 font-bold text-brand-gray-900">₹12,999</td>
                       <td className="px-6 py-4"><span className="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs font-bold uppercase rounded-sm">Processing</span></td>
                    </tr>
                    <tr>
                       <td className="px-6 py-4 font-mono text-brand-gray-600">#ORD-2930</td>
                       <td className="px-6 py-4 font-bold text-brand-gray-900">Sarah Smith</td>
                       <td className="px-6 py-4 text-brand-gray-500">Oct 23, 2023</td>
-                      <td className="px-6 py-4 font-bold text-brand-gray-900">$89.50</td>
+                      <td className="px-6 py-4 font-bold text-brand-gray-900">₹7,999</td>
                       <td className="px-6 py-4"><span className="bg-indigo-100 text-indigo-800 px-2 py-1 text-xs font-bold uppercase rounded-sm">Shipped</span></td>
                    </tr>
                    <tr>
                       <td className="px-6 py-4 font-mono text-brand-gray-600">#ORD-2929</td>
                       <td className="px-6 py-4 font-bold text-brand-gray-900">Mike Jordan</td>
                       <td className="px-6 py-4 text-brand-gray-500">Oct 23, 2023</td>
-                      <td className="px-6 py-4 font-bold text-brand-gray-900">$210.00</td>
+                      <td className="px-6 py-4 font-bold text-brand-gray-900">₹21,999</td>
                       <td className="px-6 py-4"><span className="bg-blue-100 text-blue-800 px-2 py-1 text-xs font-bold uppercase rounded-sm">Delivered</span></td>
                    </tr>
                 </tbody>

@@ -80,8 +80,8 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
           alt="Bazzaro Hero"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="relative z-20 p-8 lg:p-16 mb-8 lg:mb-16">
-            <div className="max-w-xl glass-dark rounded-3xl p-8 animate-slide-in-bottom">
+        <div className="relative z-20 p-4 md:p-8 lg:p-16 mb-8 lg:mb-16">
+            <div className="max-w-xl glass-dark rounded-3xl p-6 md:p-8 animate-slide-in-bottom">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-1.5 h-1.5 rounded-full bg-brand-sand" />
                     <span className="text-brand-gray-50 text-[9px] font-black uppercase tracking-[0.5em]">Objects of Desire</span>
@@ -129,7 +129,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             </div>
             <h3 className="text-brand-gray-50 font-serif italic text-xl mb-2">Artisanal Craft</h3>
             <p className="text-brand-gray-400 text-xs leading-relaxed">
-              Hand-finished in Milan using full-grain Italian leather.
+             Hand-crafted by master artisans in Jaipur using ethically sourced leather.
             </p>
           </motion.div>
           <motion.div 
@@ -140,11 +140,11 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             transition={{ duration: 0.7, ease: 'easeOut', delay: 0.4 }}
           >
             <div className="w-16 h-16 mb-4 rounded-full border border-brand-tan/20 flex items-center justify-center text-brand-tan">
-              <Globe size={24} strokeWidth={1} />
+              <Droplets size={24} strokeWidth={1} />
             </div>
-            <h3 className="text-brand-gray-50 font-serif italic text-xl mb-2">Global Service</h3>
+            <h3 className="text-brand-gray-50 font-serif italic text-xl mb-2">Conscious Craft</h3>
             <p className="text-brand-gray-400 text-xs leading-relaxed">
-              Complimentary & carbon-neutral shipping worldwide.
+              Committed to sustainable materials and ethical production practices.
             </p>
           </motion.div>
         </div>
@@ -155,7 +155,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
 
       {/* MARQUEE */}
       <section className="bg-brand-gray-50 py-6 overflow-hidden border-y border-brand-gray-900/5">
-        <div className="flex whitespace-nowrap animate-marquee">{[1, 2].map((_, i) => (<div key={i} className="flex items-center gap-16 px-12"><span className="text-brand-gray-900 font-black uppercase text-[10px] tracking-[0.5em] flex items-center gap-3"><Globe size={16} /> Global Logistics</span><span className="text-brand-gray-400 font-serif italic text-base">Forged in Milan</span><span className="text-brand-gray-900 font-black uppercase text-[10px] tracking-[0.5em] flex items-center gap-3"><ShieldCheck size={16} /> Secure Access</span><span className="text-brand-gray-400 font-serif italic text-base">Carbon Neutral</span></div>))}</div>
+        <div className="flex whitespace-nowrap animate-marquee">{[1, 2].map((_, i) => (<div key={i} className="flex items-center gap-16 px-12"><span className="text-brand-gray-900 font-black uppercase text-[10px] tracking-[0.5em] flex items-center gap-3"><Globe size={16} /> Global Logistics</span><span className="text-brand-gray-400 font-serif italic text-base">Forged in Jaipur</span><span className="text-brand-gray-900 font-black uppercase text-[10px] tracking-[0.5em] flex items-center gap-3"><ShieldCheck size={16} /> Secure Access</span><span className="text-brand-gray-400 font-serif italic text-base">Carbon Neutral</span></div>))}</div>
       </section>
 
       {/* FEATURED PRODUCT CAROUSEL */}

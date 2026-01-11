@@ -48,7 +48,7 @@ const ScrollToTop = () => {
 };
 
 const Preloader: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const greetings = ["Hello", "こんにちは", "Bonjour", "BAZZARO"];
+  const greetings = ["Hello", "नमस्ते", "Bonjour", "BAZZARO"];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [exitAnimation, setExitAnimation] = useState(false);
 
@@ -98,7 +98,7 @@ const AppContent: React.FC = () => {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [notifications, setNotifications] = useState<{id: number, message: string}[]>([]);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [walletBalance, setWalletBalance] = useState(25.50); // Start with a sample balance
+  const [walletBalance, setWalletBalance] = useState(2550); // Start with a sample balance
   const [isMobileWelcomeOpen, setIsMobileWelcomeOpen] = useState(false);
 
   useEffect(() => {
@@ -188,7 +188,7 @@ const AppContent: React.FC = () => {
     setWalletBalance(prev => prev - walletCreditUsed + creditsEarned);
     
     if (creditsEarned > 0) {
-      addNotification(`You've earned $${creditsEarned.toFixed(2)} in wallet credits!`);
+      addNotification(`You've earned ₹${creditsEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in wallet credits!`);
     }
   };
 

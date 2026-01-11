@@ -43,7 +43,7 @@ const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({ order }
                 <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#757575' }}>{item.color} / {item.size}</p>
               </td>
               <td style={{ ...tableCellStyle, textAlign: 'right', verticalAlign: 'middle', fontFamily: 'Playfair Display, serif', fontSize: '16px' }}>
-                ${(item.price * item.quantity).toFixed(2)}
+                ₹{(item.price * item.quantity).toLocaleString('en-IN')}
               </td>
             </tr>
           ))}
@@ -54,12 +54,12 @@ const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({ order }
         <tbody>
             <tr>
                 <td style={{ padding: '8px 0', textAlign: 'right' }}>Subtotal:</td>
-                <td style={{ padding: '8px 0', textAlign: 'right', width: '100px' }}>${subtotal.toFixed(2)}</td>
+                <td style={{ padding: '8px 0', textAlign: 'right', width: '100px' }}>₹{subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
             </tr>
             {order.walletCreditUsed && order.walletCreditUsed > 0 && (
                  <tr>
                     <td style={{ padding: '8px 0', textAlign: 'right', color: '#4CAF50' }}>Wallet Credit:</td>
-                    <td style={{ padding: '8px 0', textAlign: 'right', width: '100px', color: '#4CAF50' }}>-${order.walletCreditUsed.toFixed(2)}</td>
+                    <td style={{ padding: '8px 0', textAlign: 'right', width: '100px', color: '#4CAF50' }}>-₹{order.walletCreditUsed.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 </tr>
             )}
             <tr>
@@ -68,12 +68,12 @@ const OrderConfirmationEmail: React.FC<OrderConfirmationEmailProps> = ({ order }
             </tr>
             <tr style={{ fontWeight: 'bold', color: '#212121' }}>
                 <td style={{ padding: '8px 0', textAlign: 'right', borderTop: '1px solid #EEEEEE' }}>Total Paid:</td>
-                <td style={{ padding: '8px 0', textAlign: 'right', width: '100px', borderTop: '1px solid #EEEEEE' }}>${order.total.toFixed(2)}</td>
+                <td style={{ padding: '8px 0', textAlign: 'right', width: '100px', borderTop: '1px solid #EEEEEE' }}>₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
             </tr>
              {order.creditsEarned && order.creditsEarned > 0 && (
                 <tr style={{ fontWeight: 'bold', color: '#A67B5B' }}>
                     <td style={{ paddingTop: '16px', textAlign: 'right' }}>Credits Earned:</td>
-                    <td style={{ paddingTop: '16px', textAlign: 'right', width: '100px' }}>${order.creditsEarned.toFixed(2)}</td>
+                    <td style={{ paddingTop: '16px', textAlign: 'right', width: '100px' }}>₹{order.creditsEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 </tr>
              )}
         </tbody>

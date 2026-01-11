@@ -119,7 +119,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
                             <span className="px-3 text-sm font-bold">{item.quantity}</span>
                             <button onClick={() => onUpdateQuantity(item.variantId, 1)} className="p-2"><Plus size={14} /></button>
                           </div>
-                          <span className="font-serif italic text-lg text-brand-gray-900">${(item.price * item.quantity).toFixed(2)}</span>
+                          <span className="font-serif italic text-lg text-brand-gray-900">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -132,7 +132,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items, onUpdat
               <div className="p-6 border-t border-brand-gray-200">
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm font-semibold text-brand-gray-600">Subtotal</span>
-                  <span className="font-serif italic text-2xl text-brand-gray-900">${total.toFixed(2)}</span>
+                  <span className="font-serif italic text-2xl text-brand-gray-900">₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <Link to="/checkout" onClick={onClose} className="w-full bg-brand-gray-900 text-brand-gray-50 h-14 rounded-xl uppercase font-bold text-sm tracking-wider shadow-lg active:scale-[0.98] transition-all hover:bg-brand-gray-800 flex items-center justify-center">
                   Proceed to Checkout

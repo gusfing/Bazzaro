@@ -183,7 +183,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                           </div>
                         </div>
                         <div className="shrink-0 flex flex-col items-end">
-                          <span className="text-2xl font-serif italic leading-none">${product.base_price}</span>
+                          <span className="text-2xl font-serif italic leading-none">₹{product.base_price.toLocaleString('en-IN')}</span>
                         </div>
                       </div>
 

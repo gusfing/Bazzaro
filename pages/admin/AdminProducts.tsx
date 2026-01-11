@@ -42,7 +42,7 @@ const AdminProducts: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 font-mono text-brand-gray-600">{primaryVariant?.sku || 'N/A'}</td>
-                    <td className="px-6 py-4 font-bold text-brand-gray-900">${product.base_price.toFixed(2)}</td>
+                    <td className="px-6 py-4 font-bold text-brand-gray-900">₹{product.base_price.toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4">
                       <span className={`font-bold ${totalStock > 10 ? 'text-green-600' : totalStock > 0 ? 'text-yellow-600' : 'text-red-600'}`}>
                         {totalStock} in stock

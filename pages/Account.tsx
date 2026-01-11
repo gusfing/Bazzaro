@@ -7,9 +7,9 @@ import { User, Package, LogOut, Wallet } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const mockOrders = [
-  { id: '#ORD-2931', date: 'Oct 24, 2023', total: 145.00, status: 'Processing' },
-  { id: '#ORD-2819', date: 'Sep 12, 2023', total: 320.00, status: 'Delivered' },
-  { id: '#ORD-2755', date: 'Aug 30, 2023', total: 89.50, status: 'Delivered' },
+  { id: '#ORD-2931', date: 'Oct 24, 2023', total: 12999, status: 'Processing' },
+  { id: '#ORD-2819', date: 'Sep 12, 2023', total: 25999, status: 'Delivered' },
+  { id: '#ORD-2755', date: 'Aug 30, 2023', total: 7999, status: 'Delivered' },
 ];
 
 interface AccountProps {
@@ -49,7 +49,7 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
               <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm flex flex-col items-center justify-center text-center h-full">
                 <Wallet size={24} className="text-brand-tan mb-4"/>
                 <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Available Credit</span>
-                <span className="font-serif italic text-4xl mt-2 text-brand-gray-900">${walletBalance.toFixed(2)}</span>
+                <span className="font-serif italic text-4xl mt-2 text-brand-gray-900">₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </section>
             <section className="animate-reveal" style={{ animationDelay: '0.5s' }}>
@@ -84,7 +84,7 @@ const Account: React.FC<AccountProps> = ({ walletBalance }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif italic text-lg">${order.total.toFixed(2)}</p>
+                    <p className="font-serif italic text-lg">₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     <p className={`text-xs font-bold ${order.status === 'Processing' ? 'text-yellow-600' : 'text-green-600'}`}>{order.status}</p>
                   </div>
                 </div>

@@ -47,7 +47,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ order }) => {
              <div className="bg-brand-tan/10 border border-brand-tan/20 p-4 rounded-2xl flex items-center justify-center gap-4 mb-8 animate-reveal" style={{animationDelay: '0.1s'}}>
                  <Star size={18} className="text-brand-tan" />
                  <p className="text-xs font-bold text-brand-sepia">
-                     You've earned <span className="font-serif italic text-base">${order.creditsEarned.toFixed(2)}</span> in credits for your next purchase!
+                     You've earned <span className="font-serif italic text-base">₹{order.creditsEarned.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> in credits for your next purchase!
                  </p>
              </div>
           )}
@@ -60,19 +60,19 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({ order }) => {
                           <p className="font-bold">{item.title}</p>
                           <p className="text-xs text-brand-gray-500">{item.color} / {item.size}</p>
                       </div>
-                      <span className="font-medium">${item.price.toFixed(2)} x {item.quantity}</span>
+                      <span className="font-medium">₹{item.price.toLocaleString('en-IN')} x {item.quantity}</span>
                   </div>
               ))}
               <div className="border-t border-brand-gray-200 pt-4">
                   {order.walletCreditUsed && order.walletCreditUsed > 0 && (
                     <div className="flex justify-between items-center text-sm mb-2 text-brand-success">
                         <span>Wallet Credit Used</span>
-                        <span>-${order.walletCreditUsed.toFixed(2)}</span>
+                        <span>-₹{order.walletCreditUsed.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center font-bold text-lg">
                       <span>Total Paid</span>
-                      <span>${order.total.toFixed(2)}</span>
+                      <span>₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
               </div>
           </div>

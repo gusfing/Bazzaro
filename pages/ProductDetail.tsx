@@ -48,8 +48,8 @@ const ProductSchema: React.FC<{ product: Product; selectedVariant: ProductVarian
     "offers": {
       "@type": "Offer",
       "url": productUrl,
-      "priceCurrency": "USD",
-      "price": product.base_price.toFixed(2),
+      "priceCurrency": "INR",
+      "price": product.base_price,
       "priceValidUntil": nextYear.toISOString().split('T')[0],
       "availability": stockStatus,
       "itemCondition": "https://schema.org/NewCondition"
@@ -204,6 +204,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
       document.title = pageTitle;
       document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
       
+      // Keywords Meta Tag
+      const keywords = ['BAZZARO', 'luxury bags', 'designer bags', 'Indian craftsmanship', 'sustainable fashion', ...product.tags || []].join(', ');
+      setMetaTag('name', 'keywords', keywords);
+
       // Canonical Tag
       const canonicalLink = document.querySelector('link[rel="canonical"]');
       if (canonicalLink) {
@@ -223,7 +227,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
       setMetaTag('property', 'og:type', 'product');
       setMetaTag('property', 'og:site_name', 'BAZZARO');
       setMetaTag('property', 'product:price:amount', product.base_price.toString());
-      setMetaTag('property', 'product:price:currency', 'USD');
+      setMetaTag('property', 'product:price:currency', 'INR');
 
       // Twitter Card Meta Tags
       setMetaTag('name', 'twitter:card', 'summary_large_image');
@@ -371,7 +375,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                   
                   <div className="space-y-4">
                       <div className="flex justify-between items-center gap-4">
-                      <div className="flex flex-col"><span className="text-brand-gray-400 text-xs">Price</span><span className="text-brand-gray-50 text-2xl font-bold leading-none">${product.base_price.toFixed(2)}</span></div>
+                      <div className="flex flex-col"><span className="text-brand-gray-400 text-xs">Price</span><span className="text-brand-gray-50 text-2xl font-bold leading-none">₹{product.base_price.toLocaleString('en-IN')}</span></div>
                       <button onClick={handleAddToCart} disabled={!selectedVariant || stockLevel === 0} className="flex-grow bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-brand-gray-50/20 disabled:opacity-40 disabled:cursor-not-allowed">Add to Cart</button>
                       </div>
                       <button onClick={handleBuyNow} disabled={!selectedVariant || stockLevel === 0} className="w-full bg-brand-gold text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">Buy Now</button>

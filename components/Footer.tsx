@@ -96,7 +96,7 @@ const Footer: React.FC = () => {
           <p className="text-xs text-brand-gray-600">
             &copy; {new Date().getFullYear()} BAZZARO. Objects of Desire.
           </p>
-          <p className="text-xs text-brand-gray-600">Milan, Italy</p>
+          <p className="text-xs text-brand-gray-600">Jaipur, India</p>
         </div>
       </div>
     </footer>

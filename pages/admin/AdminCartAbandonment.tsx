@@ -88,7 +88,7 @@ const AdminCartAbandonment: React.FC = () => {
                   <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-md" />
                   <div>
                     <p className="text-xs font-bold text-brand-gray-800">{item.title}</p>
-                    <p className="text-xs text-brand-gray-500">{item.quantity} x ${item.price.toFixed(2)}</p>
+                    <p className="text-xs text-brand-gray-500">{item.quantity} x ₹{item.price.toLocaleString('en-IN')}</p>
                   </div>
                 </div>
               ))}
@@ -97,7 +97,7 @@ const AdminCartAbandonment: React.FC = () => {
             <div className="p-6 bg-brand-gray-50 rounded-b-lg border-t border-brand-gray-100 flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold uppercase text-brand-gray-500">Cart Value</span>
-                <p className="font-bold text-lg text-brand-gray-900">${cart.totalValue.toFixed(2)}</p>
+                <p className="font-bold text-lg text-brand-gray-900">₹{cart.totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
               </div>
               
               <AnimatePresence mode="wait">

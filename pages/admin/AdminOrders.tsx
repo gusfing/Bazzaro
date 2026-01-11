@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
 
 const mockOrdersData = [
-  { id: '#ORD-2931', customer: 'Alex Doe', date: 'Oct 24, 2023', total: 145.00, status: 'Processing' as OrderStatus },
-  { id: '#ORD-2930', customer: 'Sarah Smith', date: 'Oct 23, 2023', total: 89.50, status: 'Shipped' as OrderStatus },
-  { id: '#ORD-2929', customer: 'Mike Jordan', date: 'Oct 23, 2023', total: 210.00, status: 'Delivered' as OrderStatus },
-  { id: '#ORD-2928', customer: 'Jane Foster', date: 'Oct 22, 2023', total: 450.00, status: 'Delivered' as OrderStatus },
-  { id: '#ORD-2927', customer: 'Chris Evans', date: 'Oct 21, 2023', total: 120.00, status: 'Cancelled' as OrderStatus },
+  { id: '#ORD-2931', customer: 'Alex Doe', date: 'Oct 24, 2023', total: 12999, status: 'Processing' as OrderStatus },
+  { id: '#ORD-2930', customer: 'Sarah Smith', date: 'Oct 23, 2023', total: 7999, status: 'Shipped' as OrderStatus },
+  { id: '#ORD-2929', customer: 'Mike Jordan', date: 'Oct 23, 2023', total: 21999, status: 'Delivered' as OrderStatus },
+  { id: '#ORD-2928', customer: 'Jane Foster', date: 'Oct 22, 2023', total: 35999, status: 'Delivered' as OrderStatus },
+  { id: '#ORD-2927', customer: 'Chris Evans', date: 'Oct 21, 2023', total: 9999, status: 'Cancelled' as OrderStatus },
 ];
 
 const statusColors: { [key in OrderStatus]: string } = {
@@ -57,7 +57,7 @@ const AdminOrders: React.FC = () => {
                   <td className="px-6 py-4 font-mono text-brand-gray-600">{order.id}</td>
                   <td className="px-6 py-4 font-bold text-brand-gray-900">{order.customer}</td>
                   <td className="px-6 py-4 text-brand-gray-500">{order.date}</td>
-                  <td className="px-6 py-4 font-bold text-brand-gray-900">${order.total.toFixed(2)}</td>
+                  <td className="px-6 py-4 font-bold text-brand-gray-900">₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                   <td className="px-6 py-4">
                      <select 
                         value={order.status}

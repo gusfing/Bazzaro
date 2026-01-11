@@ -46,7 +46,7 @@ const About: React.FC = () => {
             BAZZARO exists at the intersection of architectural form and everyday function. We believe that the items we carry should be more than mere accessories; they should be extensions of our identity, crafted with intention and designed to endure. Our name, derived from the concept of a curated marketplace, reflects our mission: to offer a singular, focused collection of objects that embody a quiet, confident luxury.
           </p>
           <p className="animate-reveal" style={{ animationDelay: '0.8s' }}>
-            Each piece begins its life in our Milan-based studio, where we obsess over materials, silhouettes, and the subtle interplay of light and shadow. We work with artisans who share our dedication to craftsmanship, using traditional techniques to realize a modern vision. The result is a collection that feels both timeless and contemporary—objects of intent for the discerning individual.
+            Each piece begins its life in our studio, nestled in the heart of Jaipur, where we obsess over sustainable materials, silhouettes, and the subtle interplay of light and shadow. We partner with local artisans who share our dedication to craftsmanship, using traditional techniques to realize a modern vision. The result is a collection that feels both timeless and contemporary—objects of intent for the discerning individual.
           </p>
         </section>
 

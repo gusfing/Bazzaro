@@ -3,11 +3,11 @@ import React, { useEffect } from 'react';
 import { Mail, Phone } from 'lucide-react';
 
 const mockCustomers = [
-  { id: 'u1', name: 'Alex Doe', email: 'alex.doe@example.com', totalOrders: 3, totalSpent: 554.50 },
-  { id: 'u2', name: 'Sarah Smith', email: 'sarah.s@example.com', totalOrders: 1, totalSpent: 89.50 },
-  { id: 'u3', name: 'Mike Jordan', email: 'mike.j@example.com', totalOrders: 5, totalSpent: 1250.00 },
-  { id: 'u4', name: 'Jane Foster', email: 'jane.foster@example.com', totalOrders: 2, totalSpent: 890.00 },
-  { id: 'u5', name: 'Chris Evans', email: 'chris.e@example.com', totalOrders: 1, totalSpent: 120.00 },
+  { id: 'u1', name: 'Alex Doe', email: 'alex.doe@example.com', totalOrders: 3, totalSpent: 45550 },
+  { id: 'u2', name: 'Sarah Smith', email: 'sarah.s@example.com', totalOrders: 1, totalSpent: 7999 },
+  { id: 'u3', name: 'Mike Jordan', email: 'mike.j@example.com', totalOrders: 5, totalSpent: 102500 },
+  { id: 'u4', name: 'Jane Foster', email: 'jane.foster@example.com', totalOrders: 2, totalSpent: 75998 },
+  { id: 'u5', name: 'Chris Evans', email: 'chris.e@example.com', totalOrders: 1, totalSpent: 9999 },
 ];
 
 const AdminCustomers: React.FC = () => {
@@ -40,7 +40,7 @@ const AdminCustomers: React.FC = () => {
                     <div className="text-xs text-brand-gray-500">{customer.email}</div>
                   </td>
                   <td className="px-6 py-4 font-medium text-brand-gray-700">{customer.totalOrders}</td>
-                  <td className="px-6 py-4 font-bold text-brand-gray-900">${customer.totalSpent.toFixed(2)}</td>
+                  <td className="px-6 py-4 font-bold text-brand-gray-900">₹{customer.totalSpent.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                         <a href={`mailto:${customer.email}`} className="p-2 text-brand-gray-400 hover:text-brand-gray-900 hover:bg-brand-gray-100 rounded-md transition-colors"><Mail size={16} /></a>

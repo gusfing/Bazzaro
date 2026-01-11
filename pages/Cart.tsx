@@ -166,7 +166,7 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
                       <Plus size={12} className="text-brand-gray-50" />
                     </button>
                   </div>
-                  <span className="font-serif italic text-lg text-brand-gray-50">${(item.price * item.quantity).toFixed(0)}</span>
+                  <span className="font-serif italic text-lg text-brand-gray-50">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                 </div>
               </div>
             </div>
@@ -181,7 +181,7 @@ const CartPage: React.FC<CartProps> = ({ items, onUpdateQuantity, onRemove }) =>
                 <span className="text-brand-gray-400 uppercase text-[9px] font-black tracking-[0.3em] block mb-1">Subtotal</span>
                 <span className="text-[10px] text-brand-gray-400 font-bold">Tax & Shipping calculated at checkout</span>
               </div>
-              <span className="font-serif italic text-3xl text-brand-gray-50">${total.toFixed(2)}</span>
+              <span className="font-serif italic text-3xl text-brand-gray-50">₹{total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <Link to="/checkout" className="w-full bg-brand-gray-50 text-brand-gray-950 h-16 rounded-2xl uppercase font-black text-[10px] tracking-[0.3em] shadow-2xl active:scale-[0.98] transition-all hover:bg-white group flex items-center justify-center">
               Proceed to Checkout <span className="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
