@@ -18,7 +18,7 @@ const MobileWelcome: React.FC<MobileWelcomeProps> = ({ onClose }) => {
                 className="fixed inset-0 bg-brand-gray-950/70 backdrop-blur-xl z-[1000] flex flex-col items-center justify-end lg:hidden"
             >
                 <img
-                    src="https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800"
+                    src="https://images.unsplash.com/photo-1594223274512-ad4803739b7c"
                     alt="Welcome to Bazzaro"
                     className="absolute inset-0 w-full h-full object-cover opacity-30"
                 />

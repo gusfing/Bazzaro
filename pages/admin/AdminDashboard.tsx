@@ -1,5 +1,8 @@
 
 import React, { useEffect } from 'react';
+// Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
+import * as ReactRouterDOM from 'react-router-dom';
+const { Link } = ReactRouterDOM as any;
 import { Package, Users, ShoppingCart, TrendingUp, AlertCircle } from 'lucide-react';
 
 const StatCard: React.FC<{ title: string; value: string; sub: string; icon: React.ReactNode }> = ({ title, value, sub, icon }) => (
@@ -40,7 +43,7 @@ const AdminDashboard: React.FC = () => {
        <div className="bg-white border border-brand-gray-200 rounded-lg overflow-hidden">
           <div className="p-6 border-b border-brand-gray-200 flex justify-between items-center">
              <h3 className="font-bold uppercase text-sm text-brand-gray-900">Recent Orders</h3>
-             <button className="text-xs font-bold uppercase text-brand-gray-900 underline">View All</button>
+             <Link to="/admin/orders" className="text-xs font-bold uppercase text-brand-gray-900 underline">View All</Link>
           </div>
           <div className="overflow-x-auto">
              <table className="w-full text-sm text-left">

@@ -142,3 +142,11 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
 }
+
+// Bundle Entity
+export interface Bundle {
+  id: string;
+  title: string;
+  productIds: string[];
+  bundle_price: number;
+}

@@ -5,7 +5,7 @@ const urlsToCache = [
   '/index.html',
   '/index.tsx',
   '/BAZZARO DARK LOGO (1).png',
-  'https://images.unsplash.com/photo-1576426863848-c2b6fd34342a?auto=format&fit=crop&q=80&w=1920' // Hero image
+  'https://images.unsplash.com/photo-1620921207297-4eb74288054c?q=80&w=2592&auto=format&fit=crop' // Hero image
 ];
 
 self.addEventListener('install', event => {

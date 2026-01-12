@@ -6,19 +6,21 @@ const { useParams, useNavigate, Link } = ReactRouterDOM as any;
 import { Heart, ChevronLeft, Minus, Plus, Star, ChevronDown, Share2, ChevronRight, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 // Fix: Removed file extensions from local component imports
-import { MOCK_PRODUCTS, MOCK_COUPONS } from '../constants';
-import { Product, ProductVariant, Review } from '../types';
+import { MOCK_PRODUCTS, MOCK_COUPONS, MOCK_BUNDLES } from '../constants';
+import { Product, ProductVariant, Review, Bundle } from '../types';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CouponCard from '../components/CouponCard';
 import TrustAndSupport from '../components/TrustAndSupport';
 import AiStylist from '../components/AiStylist';
+import BundleDisplay from '../components/BundleDisplay';
 
 interface ProductDetailProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
   addNotification: (message: string) => void;
   toggleWishlist: (productId: string, productTitle: string) => void;
   isWishlisted: (productId: string) => boolean;
+  onAddBundleToCart: (productIds: string[], bundleTitle: string) => void;
 }
 
 const ProductSchema: React.FC<{ product: Product; selectedVariant: ProductVariant | undefined }> = ({ product, selectedVariant }) => {
@@ -43,7 +45,20 @@ const ProductSchema: React.FC<{ product: Product; selectedVariant: ProductVarian
         "@type": "AggregateRating",
         "ratingValue": product.rating.toFixed(1),
         "reviewCount": product.reviews_count || product.reviews.length
-      }
+      },
+      "review": product.reviews.map(r => ({
+          "@type": "Review",
+          "author": { "@type": "Person", "name": r.author },
+          "datePublished": r.date,
+          "reviewBody": r.content,
+          "name": r.title,
+          "reviewRating": {
+              "@type": "Rating",
+              "bestRating": "5",
+              "ratingValue": r.rating.toString(),
+              "worstRating": "1"
+          }
+      }))
     }),
     "offers": {
       "@type": "Offer",
@@ -154,7 +169,7 @@ const wrap = (min: number, max: number, v: number) => {
   return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotification, toggleWishlist, isWishlisted }) => {
+const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotification, toggleWishlist, isWishlisted, onAddBundleToCart }) => {
   // FIX: Because `useParams` is cast to `any`, we cannot use generics. Cast the result instead.
   const { slug } = useParams() as { slug: string };
   const navigate = useNavigate();
@@ -166,6 +181,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
   const galleryImages = product ? [product.image_url, ...product.other_images] : [];
   const [[page, direction], setPage] = useState([0, 0]);
   const imageIndex = wrap(0, galleryImages.length, page);
+  const [isMainImageLoaded, setIsMainImageLoaded] = useState(false);
+  
+  const productBundle = product ? MOCK_BUNDLES.find(b => b.productIds.includes(product!.id)) : undefined;
+
+  useEffect(() => {
+    setIsMainImageLoaded(false);
+  }, [imageIndex]);
 
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
@@ -287,11 +309,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
             {/* Image Carousel Column */}
             <div className="pt-12 lg:pt-0 lg:sticky lg:top-32">
                 <div className="relative aspect-[4/5] w-full bg-brand-gray-900 rounded-2xl overflow-hidden">
+                    <div className={`absolute inset-0 bg-brand-gray-800 transition-opacity duration-500 shimmer ${isMainImageLoaded ? 'opacity-0' : 'opacity-100'}`} />
                     <AnimatePresence initial={false} custom={direction}>
                         <motion.img
                             key={page}
                             src={galleryImages[imageIndex]}
                             alt={`${product.title} - Image ${imageIndex + 1}`}
+                            onLoad={() => setIsMainImageLoaded(true)}
                             custom={direction}
                             variants={variants}
                             initial="enter"
@@ -305,7 +329,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                                 if (offset.x < -50) paginate(1);
                                 else if (offset.x > 50) paginate(-1);
                             }}
-                            className="absolute h-full w-full object-contain"
+                            className={`absolute h-full w-full object-contain transition-all duration-700 ease-in-out ${isMainImageLoaded ? 'blur-0' : 'blur-xl'}`}
                         />
                     </AnimatePresence>
                     <button onClick={() => paginate(-1)} className="absolute top-1/2 left-4 -translate-y-1/2 z-10 w-12 h-12 bg-brand-gray-950/40 backdrop-blur-md rounded-full flex items-center justify-center text-brand-gray-50 active:scale-90 transition-all border border-brand-gray-50/10 hover:bg-brand-gray-950/60"><ChevronLeft size={24} /></button>
@@ -395,6 +419,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, addNotificat
                   )}
 
                   <AiStylist currentProduct={product} allProducts={allOtherProducts} />
+                  
+                  {productBundle && (
+                    <BundleDisplay 
+                        bundle={productBundle} 
+                        allProducts={MOCK_PRODUCTS} 
+                        onAddBundle={onAddBundleToCart} 
+                    />
+                  )}
 
                   <div>
                       <AccordionItem title="Description" defaultOpen><p>{product.description}</p></AccordionItem>

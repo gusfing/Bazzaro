@@ -131,10 +131,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
               key={activeImageUrl}
               src={activeImageUrl} 
               alt={product.title} 
-              onLoad={() => { if (!imageLoaded) setImageLoaded(true); }}
+              onLoad={() => setImageLoaded(true)}
               {...imageMotionProps}
-              style={{ scale: isHovered ? 1.1 : 1, transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
-              className="absolute inset-0 w-full h-full object-cover will-change-transform grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out" 
+              style={{ scale: isHovered ? 1.1 : 1, transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s ease-in-out' }}
+              className={`absolute inset-0 w-full h-full object-cover will-change-transform grayscale group-hover:grayscale-0 z-20 ${imageLoaded ? 'blur-0' : 'blur-xl'}`}
               loading="lazy" 
             />
           </AnimatePresence>
@@ -226,20 +226,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, toggleW
                                       {isAdded ? (
                                       <motion.div
                                           key="check"
-                                          initial={{ scale: 0.5, opacity: 0 }}
-                                          animate={{ scale: 1, opacity: 1 }}
-                                          exit={{ scale: 0.5, opacity: 0 }}
-                                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                                          initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
+                                          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                                          exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
+                                          transition={{ type: 'spring', stiffness: 400, damping: 15 }}
                                       >
                                           <Check size={16} className="text-brand-gray-50" />
                                       </motion.div>
                                       ) : (
                                       <motion.div
                                           key="plus"
-                                          initial={{ scale: 1, opacity: 1 }}
-                                          animate={{ scale: 1, opacity: 1 }}
-                                          exit={{ scale: 0.5, opacity: 0 }}
-                                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                                          initial={{ scale: 1, opacity: 1, rotate: 0 }}
+                                          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                                          exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
+                                          transition={{ duration: 0.3, ease: 'easeOut' }}
                                       >
                                           <Plus size={16} className="text-brand-gray-50" />
                                       </motion.div>

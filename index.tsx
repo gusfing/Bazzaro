@@ -17,11 +17,21 @@ root.render(
 
 // Register Service Worker for PWA
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registered: ', registration);
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
+  // The service worker can fail to register in some development environments
+  // due to cross-origin security policies. We will conditionally register it
+  // to avoid console errors in those environments, while keeping it active
+  // for production.
+  const isDevEnvironment = window.location.hostname.endsWith('usercontent.goog');
+
+  if (!isDevEnvironment) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(registration => {
+        console.log('SW registered: ', registration);
+      }).catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
     });
-  });
+  } else {
+    console.warn('Service Worker registration skipped in this development environment due to cross-origin restrictions.');
+  }
 }

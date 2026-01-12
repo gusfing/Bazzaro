@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { useSearchParams } = ReactRouterDOM as any;
@@ -7,21 +7,36 @@ import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '../constants';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { Product, ProductVariant } from '../types';
+import RewardProgress from '../components/RewardProgress';
+import { Loader2 } from 'lucide-react';
 
 interface ShopProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
   toggleWishlist: (productId: string, productTitle: string) => void;
   isWishlisted: (productId: string) => boolean;
+  addWalletCredits: (amount: number) => void;
+  addNotification: (message: string) => void;
 }
 
 const PRODUCTS_PER_PAGE = 8;
+const SCROLL_REWARD_GOAL = 3000; // Pixels to scroll to get a reward
 
-const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }) => {
+const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted, addWalletCredits, addNotification }) => {
   const [searchParams] = useSearchParams();
-  
   const activeCategorySlug = searchParams.get('cat');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(activeCategorySlug || null);
-  const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
+  
+  // Infinite Scroll State
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // Gamification State
+  const [browsingProgress, setBrowsingProgress] = useState(0);
+  const [isRewardClaimable, setIsRewardClaimable] = useState(false);
+  const totalScrolledRef = useRef(0);
+  const lastScrollYRef = useRef(0);
   
   const activeCategory = useMemo(() => MOCK_CATEGORIES.find(c => c.slug === selectedCategory), [selectedCategory]);
 
@@ -46,25 +61,92 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
     return products;
   }, [selectedCategory]);
 
-  useEffect(() => {
-    // Reset visible count when category changes
-    setVisibleCount(PRODUCTS_PER_PAGE);
-  }, [selectedCategory]);
-  
-  const visibleProducts = useMemo(() => {
-    return filteredProducts.slice(0, visibleCount);
-  }, [filteredProducts, visibleCount]);
-  
-  const handleLoadMore = () => {
-    setVisibleCount(prevCount => prevCount + PRODUCTS_PER_PAGE);
-  };
+  const hasMoreProducts = useMemo(() => {
+    return page * PRODUCTS_PER_PAGE < filteredProducts.length;
+  }, [page, filteredProducts]);
 
-  const canLoadMore = visibleCount < filteredProducts.length;
+  const visibleProducts = useMemo(() => {
+    return filteredProducts.slice(0, page * PRODUCTS_PER_PAGE);
+  }, [filteredProducts, page]);
+
+  useEffect(() => {
+    // Reset page when category changes
+    setPage(1);
+  }, [selectedCategory]);
+
+  const handleLoadMore = useCallback(() => {
+    if (!isLoading && hasMoreProducts) {
+        setIsLoading(true);
+        // Simulate network delay for better UX
+        setTimeout(() => {
+            setPage(prevPage => prevPage + 1);
+            setIsLoading(false);
+        }, 500);
+    }
+  }, [isLoading, hasMoreProducts]);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          handleLoadMore();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observerRef.current.observe(currentRef);
+    }
+
+    return () => {
+      if (observerRef.current && currentRef) {
+        observerRef.current.unobserve(currentRef);
+      }
+    };
+  }, [handleLoadMore]);
+
+  // Gamification Scroll Logic
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+
+    const handleScroll = () => {
+      if (isRewardClaimable) return;
+
+      const currentScrollY = window.scrollY;
+      const scrollDelta = Math.abs(currentScrollY - lastScrollYRef.current);
+      lastScrollYRef.current = currentScrollY;
+
+      totalScrolledRef.current += scrollDelta;
+
+      const newProgress = Math.min(totalScrolledRef.current / SCROLL_REWARD_GOAL, 1);
+      setBrowsingProgress(newProgress);
+
+      if (newProgress >= 1) {
+        setIsRewardClaimable(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isRewardClaimable]);
+
+  const handleClaimReward = () => {
+    const rewardAmount = Math.random() * (50 - 10) + 10; // Random between 10 and 50
+    addWalletCredits(rewardAmount);
+    addNotification(`✨ You earned ₹${rewardAmount.toFixed(2)} in credits!`);
+    
+    // Reset state
+    setIsRewardClaimable(false);
+    setBrowsingProgress(0);
+    totalScrolledRef.current = 0;
+  };
 
   return (
     <div className="relative w-full min-h-screen bg-brand-gray-950 flex flex-col">
       <div className="relative h-64 md:h-80 bg-brand-espresso w-full pt-24">
-        <img src={activeCategory?.image_url || 'https://images.unsplash.com/photo-1599371300803-344436254b42?auto=format&fit=crop&q=80&w=1920'} alt={activeCategory?.name || 'The Collection'} className="absolute inset-0 w-full h-full object-cover opacity-30"/>
+        <img src={activeCategory?.image_url || 'https://images.unsplash.com/photo-1599371300803-344436254b42'} alt={activeCategory?.name || 'The Collection'} className="absolute inset-0 w-full h-full object-cover opacity-30"/>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-brand-gray-50 z-10 p-4 pt-24">
           <h1 className="font-serif text-5xl italic">{activeCategory?.name || 'The Collection'}</h1>
           <p className="mt-2 text-sm text-brand-gray-300">Designed for repeat use, not occasions.</p>
@@ -115,17 +197,24 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
             </div>
           ))}
         </div>
-        {canLoadMore && (
-          <div className="mt-16 text-center">
-            <button
-              onClick={handleLoadMore}
-              className="bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 h-14 px-10 rounded-full font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-brand-gray-50/20"
-            >
-              Load More
-            </button>
-          </div>
-        )}
+        
+        <div className="h-20 flex items-center justify-center">
+          {hasMoreProducts ? (
+            <div ref={loadMoreRef} className="w-full h-full flex items-center justify-center">
+              {isLoading && <Loader2 className="animate-spin text-brand-gray-500" />}
+            </div>
+          ) : (
+            filteredProducts.length > PRODUCTS_PER_PAGE && (
+              <p className="text-xs text-brand-gray-600 font-semibold tracking-wider">You've reached the end of the archive.</p>
+            )
+          )}
+        </div>
       </div>
+      <RewardProgress 
+        progress={browsingProgress} 
+        isClaimable={isRewardClaimable} 
+        onClaim={handleClaimReward} 
+      />
     </div>
   );
 };

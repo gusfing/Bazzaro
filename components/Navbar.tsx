@@ -7,19 +7,18 @@ import { ShoppingBag, Search, Menu, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { User as FirebaseUser } from 'firebase/auth';
 // Fix: Removed file extensions from local component imports
-import MobileMenu from './MobileMenu';
 import SearchOverlay from './SearchOverlay';
 
 interface NavbarProps {
   cartCount: number;
   isBannerVisible: boolean;
   onCartClick: () => void;
+  onMenuClick: () => void;
   currentUser: FirebaseUser | null;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick, currentUser }) => {
+const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick, onMenuClick, currentUser }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
@@ -36,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
   const navLinks = [
     { label: 'Shop', path: '/shop' },
     { label: 'About', path: '/about' },
-    { label: 'Editorial', path: '/editorial' },
+    { label: 'Articles', path: '/articles' },
   ];
 
   const headerClasses = `
@@ -56,7 +55,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
           {/* Left: Logo */}
           <Link to="/" className="shrink-0">
             <img 
-              src="/BAZZARO DARK LOGO (1).png" 
+              src="https://i.imgur.com/3Y01s3D.png" 
               alt="BAZZARO" 
               className="h-5 w-auto object-contain" 
             />
@@ -89,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
             </Link>
             
             <button 
-              onClick={() => setIsMenuOpen(true)}
+              onClick={onMenuClick}
               className="lg:hidden text-brand-gray-300 hover:text-brand-gray-50 transition-colors"
               aria-label="Open menu"
             >
@@ -120,7 +119,6 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
         </div>
       </header>
 
-      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} currentUser={currentUser} />
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );

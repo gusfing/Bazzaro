@@ -31,6 +31,7 @@ const Account: React.FC<AccountProps> = ({ walletBalance, currentUser }) => {
   }, []);
 
   const handleSignOut = async () => {
+    if (!auth) return; // Prevent sign out if firebase is not configured
     try {
       await signOut(auth);
       navigate('/login');

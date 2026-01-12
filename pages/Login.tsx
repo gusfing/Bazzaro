@@ -11,7 +11,7 @@ import {
   signInWithPhoneNumber,
   ConfirmationResult
 } from 'firebase/auth';
-import { Phone, Loader2, KeyRound } from 'lucide-react';
+import { Phone, Loader2, KeyRound, AlertTriangle } from 'lucide-react';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const GoogleIcon: React.FC = () => (
@@ -26,10 +26,11 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState<'google' | 'otp' | null>(null);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const isFirebaseConfigured = !!auth;
 
     // Setup invisible reCAPTCHA
     useEffect(() => {
-        if (view === 'phone') {
+        if (view === 'phone' && isFirebaseConfigured && auth) {
             try {
                 // @ts-ignore
                 window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -41,13 +42,14 @@ const Login: React.FC = () => {
                 setError("Could not initialize verification. Please refresh and try again.");
             }
         }
-    }, [view]);
+    }, [view, isFirebaseConfigured]);
 
     useEffect(() => {
         document.title = 'Secure Access | BAZZARO';
     }, []);
 
     const handleGoogleSignIn = async () => {
+        if (!isFirebaseConfigured || !auth) return;
         setLoading('google');
         setError('');
         try {
@@ -64,7 +66,7 @@ const Login: React.FC = () => {
     
     const handlePhoneSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!phone) return;
+        if (!phone || !isFirebaseConfigured || !auth) return;
         setLoading('otp');
         setError('');
         try {
@@ -82,7 +84,7 @@ const Login: React.FC = () => {
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!otp || !confirmationResult) return;
+        if (!otp || !confirmationResult || !isFirebaseConfigured) return;
         setLoading('otp');
         setError('');
         try {
@@ -111,60 +113,70 @@ const Login: React.FC = () => {
                 </header>
 
                 <div className="w-full max-w-sm mx-auto animate-reveal" style={{ animationDelay: '0.4s' }}>
-                    {view === 'options' && (
-                         <div className="space-y-4">
-                            <button onClick={handleGoogleSignIn} disabled={!!loading} className="w-full h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all bg-white text-brand-gray-900 hover:bg-brand-gray-200 flex items-center justify-center gap-3">
-                                {loading === 'google' ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> Continue with Google</>}
-                            </button>
-                            <button onClick={() => setView('phone')} disabled={!!loading} className="w-full h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 hover:bg-brand-gray-50/20 flex items-center justify-center gap-3">
-                                <Phone size={18} /> Continue with Phone
-                            </button>
-                         </div>
-                    )}
-                    
-                    {view === 'phone' && (
+                    {!isFirebaseConfigured ? (
+                        <div className="text-center p-6 bg-brand-error/10 border border-brand-error/20 rounded-2xl">
+                            <AlertTriangle size={24} className="mx-auto text-brand-error mb-4" />
+                            <p className="text-brand-gray-50 text-sm font-bold">Authentication is Disabled</p>
+                            <p className="text-brand-gray-400 text-xs mt-2">The application's Firebase configuration is missing or invalid. Please provide the necessary API keys to enable sign-in features.</p>
+                        </div>
+                    ) : (
                         <>
-                            {!confirmationResult ? (
-                                <form onSubmit={handlePhoneSignIn} className="space-y-4">
-                                    <div className="relative">
-                                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-brand-gray-400">+91</span>
-                                      <input 
-                                        type="tel" 
-                                        placeholder="Your 10-digit number" 
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                        className="w-full bg-brand-gray-50/5 border border-brand-gray-50/10 rounded-lg h-16 pl-14 pr-4 text-lg text-brand-gray-50 focus:outline-none focus:border-brand-tan transition-colors placeholder:text-brand-gray-50/20"
-                                      />
-                                    </div>
-                                    <button type="submit" disabled={loading === 'otp' || phone.length !== 10} className="w-full bg-brand-tan text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-50 flex items-center justify-center">
-                                        {loading === 'otp' ? <Loader2 className="animate-spin" /> : 'Send OTP'}
+                            {view === 'options' && (
+                                <div className="space-y-4">
+                                    <button onClick={handleGoogleSignIn} disabled={!!loading} className="w-full h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all bg-white text-brand-gray-900 hover:bg-brand-gray-200 flex items-center justify-center gap-3">
+                                        {loading === 'google' ? <Loader2 className="animate-spin" /> : <><GoogleIcon /> Continue with Google</>}
                                     </button>
-                                </form>
-                            ) : (
-                                <form onSubmit={handleVerifyOtp} className="space-y-4">
-                                     <p className="text-xs text-center text-brand-gray-400">Enter the 6-digit code sent to +91 {phone}.</p>
-                                    <div className="relative">
-                                      <KeyRound size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-gray-400" />
-                                      <input 
-                                        type="tel" 
-                                        placeholder="_ _ _ _ _ _" 
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                        className="w-full bg-brand-gray-50/5 border border-brand-gray-50/10 rounded-lg h-16 text-center tracking-[0.5em] text-2xl text-brand-gray-50 focus:outline-none focus:border-brand-tan transition-colors placeholder:text-brand-gray-50/20"
-                                      />
-                                    </div>
-                                    <button type="submit" disabled={loading === 'otp' || otp.length !== 6} className="w-full bg-brand-gold text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-50 flex items-center justify-center">
-                                        {loading === 'otp' ? <Loader2 className="animate-spin" /> : 'Verify & Sign In'}
+                                    <button onClick={() => setView('phone')} disabled={!!loading} className="w-full h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all bg-brand-gray-50/10 border border-brand-gray-50/20 text-brand-gray-50 hover:bg-brand-gray-50/20 flex items-center justify-center gap-3">
+                                        <Phone size={18} /> Continue with Phone
                                     </button>
-                                </form>
+                                </div>
                             )}
-                            <button onClick={() => { setView('options'); setError(''); setConfirmationResult(null); }} className="text-xs text-brand-gray-500 hover:text-brand-gray-50 transition-colors font-semibold mt-6 text-center w-full">
-                                &larr; Back to options
-                            </button>
+                            
+                            {view === 'phone' && (
+                                <>
+                                    {!confirmationResult ? (
+                                        <form onSubmit={handlePhoneSignIn} className="space-y-4">
+                                            <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-brand-gray-400">+91</span>
+                                            <input 
+                                                type="tel" 
+                                                placeholder="Your 10-digit number" 
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                                className="w-full bg-brand-gray-50/5 border border-brand-gray-50/10 rounded-lg h-16 pl-14 pr-4 text-lg text-brand-gray-50 focus:outline-none focus:border-brand-tan transition-colors placeholder:text-brand-gray-50/20"
+                                            />
+                                            </div>
+                                            <button type="submit" disabled={loading === 'otp' || phone.length !== 10} className="w-full bg-brand-tan text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-50 flex items-center justify-center">
+                                                {loading === 'otp' ? <Loader2 className="animate-spin" /> : 'Send OTP'}
+                                            </button>
+                                        </form>
+                                    ) : (
+                                        <form onSubmit={handleVerifyOtp} className="space-y-4">
+                                            <p className="text-xs text-center text-brand-gray-400">Enter the 6-digit code sent to +91 {phone}.</p>
+                                            <div className="relative">
+                                            <KeyRound size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-gray-400" />
+                                            <input 
+                                                type="tel" 
+                                                placeholder="_ _ _ _ _ _" 
+                                                value={otp}
+                                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                                className="w-full bg-brand-gray-50/5 border border-brand-gray-50/10 rounded-lg h-16 text-center tracking-[0.5em] text-2xl text-brand-gray-50 focus:outline-none focus:border-brand-tan transition-colors placeholder:text-brand-gray-50/20"
+                                            />
+                                            </div>
+                                            <button type="submit" disabled={loading === 'otp' || otp.length !== 6} className="w-full bg-brand-gold text-brand-gray-950 h-16 rounded-2xl font-bold text-sm tracking-tight active:scale-95 transition-all hover:bg-white disabled:opacity-50 flex items-center justify-center">
+                                                {loading === 'otp' ? <Loader2 className="animate-spin" /> : 'Verify & Sign In'}
+                                            </button>
+                                        </form>
+                                    )}
+                                    <button onClick={() => { setView('options'); setError(''); setConfirmationResult(null); }} className="text-xs text-brand-gray-500 hover:text-brand-gray-50 transition-colors font-semibold mt-6 text-center w-full">
+                                        &larr; Back to options
+                                    </button>
+                                </>
+                            )}
+        
+                            {error && <p className="text-brand-error text-xs text-center mt-4">{error}</p>}
                         </>
                     )}
-
-                    {error && <p className="text-brand-error text-xs text-center mt-4">{error}</p>}
                 </div>
             </div>
         </div>

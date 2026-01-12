@@ -9,7 +9,7 @@ import { MOCK_CATEGORIES } from '../constants';
 const Footer: React.FC = () => {
   const companyLinks = [
     { label: 'About', path: '/about' },
-    { label: 'Editorial', path: '/editorial' },
+    { label: 'Articles', path: '/articles' },
     { label: 'Contact', path: '/contact' },
   ];
 
@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="mb-6 inline-block">
                <img 
-                src="/BAZZARO DARK LOGO (1).png" 
+                src="https://i.imgur.com/3Y01s3D.png" 
                 alt="BAZZARO" 
                 className="h-5 w-auto object-contain" 
               />

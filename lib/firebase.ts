@@ -1,20 +1,36 @@
 
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, FirebaseApp } from 'firebase/app';
+import { getAuth, Auth } from 'firebase/auth';
 
-// IMPORTANT: Replace with your app's Firebase project configuration.
-// This configuration is typically found in your project's settings on the Firebase console.
+// --- Firebase Configuration ---
+// The app will attempt to use environment variables for Firebase config.
+// If they are not set, Firebase features will be disabled.
+// For a production build, these should be properly configured.
 const firebaseConfig = {
-  apiKey: "AIzaSyB...YOUR_API_KEY",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "your-sender-id",
-  appId: "1:your-sender-id:web:your-app-id"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
+// Only initialize Firebase if the API key is present.
+// This prevents the app from crashing if Firebase is not configured.
+if (firebaseConfig.apiKey) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+  } catch (error) {
+    console.error("Firebase initialization failed. Please check your configuration.", error);
+    // Set auth to null if initialization fails
+    auth = null;
+  }
+} else {
+  console.warn("Firebase API key is missing. Firebase authentication features will be disabled. Please provide your Firebase project credentials in your environment setup.");
+}
+
+export { auth };

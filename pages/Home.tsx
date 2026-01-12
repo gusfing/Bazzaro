@@ -40,16 +40,16 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
 
   const gridImageSets = [
     [ // First page/grid
-        { id: 'g1', url: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&q=80&w=800', alt: 'A person holding a black leather bag' },
-        { id: 'g2', url: 'https://images.unsplash.com/photo-1559563458-52792b35588f?auto=format&fit=crop&q=80&w=800', alt: 'A woman in a stylish outfit with a handbag' },
-        { id: 'g3', url: 'https://images.unsplash.com/photo-1572196285227-31238b165434?auto=format&fit=crop&q=80&w=800', alt: 'Close-up of a designer bag on a chair' },
-        { id: 'g4', url: 'https://images.unsplash.com/photo-1599371300803-344436254b42?auto=format&fit=crop&q=80&w=800', alt: 'A collection of luxury bags on display' },
+        { id: 'g1', url: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770', alt: 'A person holding a black leather bag' },
+        { id: 'g2', url: 'https://images.unsplash.com/photo-1559563458-52792b35588f', alt: 'A woman in a stylish outfit with a handbag' },
+        { id: 'g3', url: 'https://images.unsplash.com/photo-1572196285227-31238b165434', alt: 'Close-up of a designer bag on a chair' },
+        { id: 'g4', url: 'https://images.unsplash.com/photo-1599371300803-344436254b42', alt: 'A collection of luxury bags on display' },
     ],
     [ // Second page/grid
-        { id: 'g5', url: 'https://images.unsplash.com/photo-1579631383387-9257007567b5?auto=format&fit=crop&q=80&w=800', alt: 'Stylish woman with a bag' },
-        { id: 'g6', url: 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a?auto=format&fit=crop&q=80&w=800', alt: 'A handbag on a textured surface' },
-        { id: 'g7', url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800', alt: 'A brown tote bag' },
-        { id: 'g8', url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=800', alt: 'A cream colored tote bag' },
+        { id: 'g5', url: 'https://images.unsplash.com/photo-1579631383387-9257007567b5', alt: 'Stylish woman with a bag' },
+        { id: 'g6', url: 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a', alt: 'A handbag on a textured surface' },
+        { id: 'g7', url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601', alt: 'A brown tote bag' },
+        { id: 'g8', url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3', alt: 'A cream colored tote bag' },
     ]
   ];
   const gridCaption = "Designed to fit into real days. Our objects are companions for life in motion, blending seamlessly with the rhythm of your routine.";
@@ -58,13 +58,13 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
     {
       subtitle: 'The Collection',
       title: 'Shop The Archive',
-      imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7',
       linkPath: '/shop'
     },
     {
       subtitle: 'The Atelier',
       title: 'Design Your Own',
-      imageUrl: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&q=80&w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c',
       linkPath: '/custom-tote'
     }
   ];
@@ -76,8 +76,8 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
       <section className="h-screen w-full bg-brand-gray-950 text-brand-gray-50 relative flex items-end justify-start">
         <div className="absolute inset-0 bg-brand-gray-950/50 z-10" />
         <img 
-          src="https://images.unsplash.com/photo-1576426863848-c2b6fd34342a?auto=format&fit=crop&q=80&w=1920"
-          alt="Bazzaro Hero"
+          src="https://images.unsplash.com/photo-1620921207297-4eb74288054c?q=80&w=2592&auto=format&fit=crop"
+          alt="A stylish white handbag on a neutral background with a strong shadow"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="relative z-20 p-4 md:p-8 lg:p-16 mb-8 lg:mb-16">
@@ -223,16 +223,16 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
       {/* BRAND STORY SECTION */}
       <BrandStorySection />
 
-      {/* EDITORIAL SECTION */}
+      {/* JOURNAL SECTION */}
       <section className="py-24 bg-brand-gray-950 border-t border-brand-gray-900">
         <div className="px-10 lg:px-12 mb-12 text-center">
             <span className="text-[9px] font-black text-brand-tan uppercase tracking-[0.7em] mb-4 block">The Journal</span>
-            <h2 className="font-serif text-4xl text-brand-gray-50 italic">From the Editorial Desk</h2>
+            <h2 className="font-serif text-4xl text-brand-gray-50 italic">From the Journal</h2>
         </div>
         <div className="max-w-screen-xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             {MOCK_BLOG_POSTS.map((post, idx) => (
                 <Link 
-                    to="/editorial"
+                    to="/articles"
                     key={post.id} 
                     className="block group animate-reveal" 
                     style={{ animationDelay: `${idx * 0.2}s` }}
@@ -255,7 +255,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, toggleWishlist, isWishlisted }
                             {post.excerpt}
                         </p>
                         <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-gray-500 group-hover:text-brand-gray-50 transition-colors">
-                            Read More
+                            Read Article
                             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>

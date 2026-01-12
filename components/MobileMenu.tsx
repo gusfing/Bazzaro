@@ -19,7 +19,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
     { label: 'Design Your Own', path: '/custom-tote' },
     { label: 'Wishlist', path: '/wishlist' },
     { label: 'About', path: '/about' },
-    { label: 'Editorial', path: '/editorial' },
+    { label: 'Articles', path: '/articles' },
     { label: 'Contact', path: '/contact' },
     { label: currentUser ? 'Account' : 'Login', path: currentUser ? '/account' : '/login' },
     { label: 'Admin', path: '/admin' },
@@ -104,7 +104,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
             <div className="flex justify-between items-center p-6 border-b border-brand-gray-800">
               <Link to="/" onClick={onClose}>
                 <img 
-                  src="/BAZZARO DARK LOGO (1).png" 
+                  src="https://i.imgur.com/3Y01s3D.png" 
                   alt="BAZZARO" 
                   className="h-5 w-auto object-contain" 
                 />

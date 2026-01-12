@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Gift, Copy } from 'lucide-react';
 import { MOCK_COUPONS } from '../constants';
 
+interface WelcomePopupProps {
+  addNotification: (message: string) => void;
+}
+
 const WelcomePopup: React.FC<{ addNotification: (message: string) => void }> = ({ addNotification }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -80,7 +84,7 @@ const WelcomePopup: React.FC<{ addNotification: (message: string) => void }> = (
               </button>
               
               <div className="hidden md:block relative aspect-square rounded-2xl overflow-hidden bg-brand-espresso -ml-16 -my-16">
-                 <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=800" alt="Bazzaro Bag" className="w-full h-full object-cover scale-125" />
+                 <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa" alt="Bazzaro Bag" className="w-full h-full object-cover scale-125" />
                  <div className="absolute inset-0 bg-gradient-to-br from-brand-gray-950/50 to-transparent"></div>
               </div>
 
