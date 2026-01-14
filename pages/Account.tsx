@@ -3,9 +3,9 @@ import React, { useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link, useNavigate } = ReactRouterDOM as any;
-import { User, Package, LogOut, Wallet } from 'lucide-react';
-import { User as FirebaseUser, signOut } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { Package, LogOut, Wallet } from 'lucide-react';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import Breadcrumbs from '../components/Breadcrumbs';
 
 const mockOrders = [
@@ -16,31 +16,30 @@ const mockOrders = [
 
 interface AccountProps {
   walletBalance: number;
-  currentUser: FirebaseUser;
+  currentUser: User;
 }
 
 const Account: React.FC<AccountProps> = ({ walletBalance, currentUser }) => {
   const navigate = useNavigate();
-    
+
   useEffect(() => {
     const pageTitle = 'My Archive | BAZZARO';
     const pageDescription = 'Manage your account details, view your order history, and access your personal archive at BAZZARO.';
-    
+
     document.title = pageTitle;
     document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
   }, []);
 
   const handleSignOut = async () => {
-    if (!auth) return; // Prevent sign out if firebase is not configured
     try {
-      await signOut(auth);
+      await supabase.auth.signOut();
       navigate('/login');
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
-  
-  const displayName = currentUser.displayName || currentUser.email || currentUser.phoneNumber || 'Valued Customer';
+
+  const displayName = currentUser.user_metadata?.full_name || currentUser.email || 'Valued Customer';
   const displayEmail = currentUser.email || 'No email provided';
 
   return (
@@ -60,7 +59,7 @@ const Account: React.FC<AccountProps> = ({ walletBalance, currentUser }) => {
             <section className="animate-reveal" style={{ animationDelay: '0.4s' }}>
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-tan mb-4">Wallet</h2>
               <div className="bg-white p-8 rounded-[2rem] border border-brand-gray-200 shadow-sm flex flex-col items-center justify-center text-center h-full">
-                <Wallet size={24} className="text-brand-tan mb-4"/>
+                <Wallet size={24} className="text-brand-tan mb-4" />
                 <span className="text-xs font-bold uppercase tracking-wider text-brand-gray-400">Available Credit</span>
                 <span className="font-serif italic text-4xl mt-2 text-brand-gray-900">₹{walletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>

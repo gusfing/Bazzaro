@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
-const { HashRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
+const { BrowserRouter, Routes, Route, useLocation, Navigate } = ReactRouterDOM as any;
 import { AnimatePresence, motion } from "framer-motion";
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { auth } from './lib/firebase';
+import { User } from '@supabase/supabase-js';
+import { supabase } from './lib/supabase';
 // Fix: Removed file extensions from local component imports
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -37,10 +37,13 @@ import { MOCK_PRODUCTS } from './constants';
 // Admin Imports
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminCartAbandonment from './pages/admin/AdminCartAbandonment';
+import RequireAdmin from './components/RequireAdmin';
+
 
 
 const ScrollToTop = () => {
@@ -109,38 +112,43 @@ const getInitialState = <T,>(key: string, defaultValue: T): T => {
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
-  
+
   // State initialization with localStorage persistence
   const [cartItems, setCartItems] = useState<CartItem[]>(() => getInitialState('bazzaro_cart', []));
   const [wishlist, setWishlist] = useState<string[]>(() => getInitialState('bazzaro_wishlist', []));
   const [walletBalance, setWalletBalance] = useState<number>(() => getInitialState('bazzaro_wallet', 2550));
   const [latestOrder, setLatestOrder] = useState<Order | null>(() => getInitialState('bazzaro_latestOrder', null));
-  
+
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState<{id: number, message: string}[]>([]);
+  const [notifications, setNotifications] = useState<{ id: number, message: string }[]>([]);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [isMobileWelcomeOpen, setIsMobileWelcomeOpen] = useState(false);
   const [isMobileOrTablet, setIsMobileOrTablet] = useState(window.innerWidth < 1024);
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Effects to save state to localStorage on change
   useEffect(() => { try { localStorage.setItem('bazzaro_cart', JSON.stringify(cartItems)); } catch (e) { console.warn('Failed to save cart to storage', e) } }, [cartItems]);
   useEffect(() => { try { localStorage.setItem('bazzaro_wishlist', JSON.stringify(wishlist)); } catch (e) { console.warn('Failed to save wishlist to storage', e) } }, [wishlist]);
   useEffect(() => { try { localStorage.setItem('bazzaro_wallet', JSON.stringify(walletBalance)); } catch (e) { console.warn('Failed to save wallet to storage', e) } }, [walletBalance]);
-  useEffect(() => { try { if(latestOrder) localStorage.setItem('bazzaro_latestOrder', JSON.stringify(latestOrder)); } catch (e) { console.warn('Failed to save order to storage', e) } }, [latestOrder]);
+  useEffect(() => { try { if (latestOrder) localStorage.setItem('bazzaro_latestOrder', JSON.stringify(latestOrder)); } catch (e) { console.warn('Failed to save order to storage', e) } }, [latestOrder]);
 
   useEffect(() => {
-    if (auth) {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user);
-        setIsAuthLoading(false);
-      });
-      return () => unsubscribe(); // Cleanup on unmount
-    } else {
+    // Check active sessions and subscribe to auth changes
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user ?? null);
       setIsAuthLoading(false);
-    }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(session?.user ?? null);
+      setIsAuthLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -152,8 +160,8 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     const welcomeShown = sessionStorage.getItem('mobileWelcomeShown');
     if (isMobileOrTablet && !welcomeShown && !isAdminRoute) {
-        const timer = setTimeout(() => setIsMobileWelcomeOpen(true), 1500);
-        return () => clearTimeout(timer);
+      const timer = setTimeout(() => setIsMobileWelcomeOpen(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, [isAdminRoute, isMobileOrTablet]);
 
@@ -186,13 +194,13 @@ const AppContent: React.FC = () => {
     addNotification(`${product.title} added to bag`);
     setIsCartDrawerOpen(true);
   };
-  
+
   const addCustomToCart = (item: Omit<CartItem, 'quantity'>) => {
     setCartItems(prev => [...prev, { ...item, quantity: 1 }]);
     addNotification(`${item.title} added to bag`);
     setIsCartDrawerOpen(true);
   };
-  
+
   const addBundleToCart = (productIds: string[], bundleTitle: string) => {
     const itemsToAdd: CartItem[] = [];
     let updatedCart = [...cartItems];
@@ -200,13 +208,13 @@ const AppContent: React.FC = () => {
     productIds.forEach(productId => {
       const product = MOCK_PRODUCTS.find(p => p.id === productId);
       if (!product) return;
-      
+
       const variant = product.variants.find(v => v.stock_quantity > 0) || product.variants[0];
       if (!variant) return;
-      
+
       const existingItem = updatedCart.find(item => item.variantId === variant.id);
       if (existingItem) {
-        updatedCart = updatedCart.map(item => 
+        updatedCart = updatedCart.map(item =>
           item.variantId === variant.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
@@ -222,7 +230,7 @@ const AppContent: React.FC = () => {
         });
       }
     });
-    
+
     setCartItems([...updatedCart, ...itemsToAdd]);
     addNotification(`Bundle "${bundleTitle}" added to bag`);
     setIsCartDrawerOpen(true);
@@ -239,7 +247,7 @@ const AppContent: React.FC = () => {
   const addWalletCredits = (amount: number) => {
     setWalletBalance(prev => prev + amount);
   };
-  
+
   const handlePlaceOrder = (orderData: Omit<Order, 'creditsEarned'>) => {
     const creditsEarned = orderData.total * 0.10; // 10% cashback
     const finalOrder = { ...orderData, creditsEarned };
@@ -281,7 +289,7 @@ const AppContent: React.FC = () => {
         <main className="flex-grow flex flex-col">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted}/></PageTransition>} />
+              <Route path="/" element={<PageTransition><Home onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
               <Route path="/shop" element={<PageTransition><Shop onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} addWalletCredits={addWalletCredits} addNotification={addNotification} /></PageTransition>} />
               <Route path="/products/:slug" element={<PageTransition><ProductDetail onAddToCart={addToCart} addNotification={addNotification} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} onAddBundleToCart={addBundleToCart} /></PageTransition>} />
               <Route path="/custom-tote" element={<PageTransition><CustomTote onAddToCart={addCustomToCart} /></PageTransition>} />
@@ -292,11 +300,15 @@ const AppContent: React.FC = () => {
               <Route path="/about" element={<PageTransition><About /></PageTransition>} />
               <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
               <Route path="/wishlist" element={<PageTransition><Wishlist wishlistProductIds={wishlist} onAddToCart={addToCart} toggleWishlist={toggleWishlist} isWishlisted={isProductWishlisted} /></PageTransition>} />
-              
+
               <Route path="/login" element={<PageTransition>{isAuthLoading ? <AuthLoader /> : currentUser ? <Navigate to="/account" replace /> : <Login />}</PageTransition>} />
               <Route path="/account" element={<PageTransition>{isAuthLoading ? <AuthLoader /> : currentUser ? <Account walletBalance={walletBalance} currentUser={currentUser} /> : <Navigate to="/login" replace />}</PageTransition>} />
-              
-              <Route path="/admin" element={<AdminLayout />}>
+
+              <Route path="/admin" element={
+                <RequireAdmin>
+                  <AdminLayout />
+                </RequireAdmin>
+              }>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<PageTransition><AdminDashboard /></PageTransition>} />
                 <Route path="products" element={<PageTransition><AdminProducts /></PageTransition>} />
@@ -304,7 +316,7 @@ const AppContent: React.FC = () => {
                 <Route path="customers" element={<PageTransition><AdminCustomers /></PageTransition>} />
                 <Route path="cart-abandonment" element={<PageTransition><AdminCartAbandonment /></PageTransition>} />
               </Route>
-              
+
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
             </Routes>
           </AnimatePresence>
@@ -324,13 +336,13 @@ const App: React.FC = () => {
   const [isPreloading, setIsPreloading] = useState(true);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ScrollToTop />
       {isPreloading && <Preloader onComplete={() => setIsPreloading(false)} />}
       <div className={`transition-opacity duration-1000 ${isPreloading ? 'opacity-0' : 'opacity-100'}`}>
         {!isPreloading && <AppContent />}
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

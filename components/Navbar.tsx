@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link, useLocation } = ReactRouterDOM as any;
-import { ShoppingBag, Search, Menu, User } from 'lucide-react';
+import { ShoppingBag, Search, Menu, User as UserIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { User as FirebaseUser } from 'firebase/auth';
+import { User } from '@supabase/supabase-js';
 // Fix: Removed file extensions from local component imports
 import SearchOverlay from './SearchOverlay';
 
@@ -14,7 +14,7 @@ interface NavbarProps {
   isBannerVisible: boolean;
   onCartClick: () => void;
   onMenuClick: () => void;
-  currentUser: FirebaseUser | null;
+  currentUser: User | null;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick, onMenuClick, currentUser }) => {
@@ -43,7 +43,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
     ${isBannerVisible ? 'top-10' : 'top-0'}
     ${scrolled || !isHomePage ? 'bg-brand-gray-950/80 backdrop-blur-lg border-b border-brand-gray-800 shadow-xl' : 'bg-transparent border-b border-transparent'}
   `;
-  
+
   const contentWrapperClasses = `
     flex justify-between items-center w-full max-w-screen-xl mx-auto px-6 lg:px-12 py-4
   `;
@@ -54,10 +54,10 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
         <div className={contentWrapperClasses}>
           {/* Left: Logo */}
           <Link to="/" className="shrink-0">
-            <img 
-              src="https://i.imgur.com/3Y01s3D.png" 
-              alt="BAZZARO" 
-              className="h-5 w-auto object-contain" 
+            <img
+              src="/logo.png"
+              alt="BAZZARO"
+              className="h-8 w-auto object-contain"
             />
           </Link>
 
@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
 
           {/* Right: Actions */}
           <div className="flex gap-4 items-center">
-            <button 
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="text-brand-gray-300 hover:text-brand-gray-50 transition-colors"
               aria-label="Open search"
@@ -84,18 +84,18 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, isBannerVisible, onCartClick
               <Search size={20} strokeWidth={1.5} />
             </button>
             <Link to={currentUser ? "/account" : "/login"} className="hidden lg:block text-brand-gray-300 hover:text-brand-gray-50 transition-colors" aria-label="Account">
-              <User size={20} strokeWidth={1.5} />
+              <UserIcon size={20} strokeWidth={1.5} />
             </Link>
-            
-            <button 
+
+            <button
               onClick={onMenuClick}
               className="lg:hidden text-brand-gray-300 hover:text-brand-gray-50 transition-colors"
               aria-label="Open menu"
             >
               <Menu size={20} strokeWidth={1.5} />
             </button>
-            
-            <button 
+
+            <button
               onClick={onCartClick}
               className="flex items-center gap-2 text-brand-gray-300 hover:text-brand-gray-50 transition-colors"
               aria-label={`Shopping bag with ${cartCount} items`}

@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Sparkles, Loader2, DollarSign, Edit3, Tag, Key, Image as ImageIcon } from 'lucide-react';
 import { GoogleGenAI, Type } from '@google/genai';
@@ -15,6 +15,7 @@ interface AddProductModalProps {
     isOpen: boolean;
     onClose: () => void;
     onAddProduct: (newProduct: Omit<Product, 'id' | 'slug' | 'variants'>) => void;
+    editingProduct?: Product | null;
 }
 
 const InputField = ({ label, value, onChange, placeholder, name, type = "text", icon: Icon, disabled = false, required = true }) => (
@@ -58,10 +59,10 @@ const TextAreaField = ({ label, value, onChange, placeholder, name, icon: Icon, 
 );
 
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddProduct, editingProduct }) => {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    
+
     // Form fields
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
@@ -69,10 +70,23 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
     const [keyPoints, setKeyPoints] = useState('');
     const [seoTags, setSeoTags] = useState('');
     const [altText, setAltText] = useState('');
-    
+
     // AI state
     const [isLoadingAi, setIsLoadingAi] = useState(false);
     const [error, setError] = useState('');
+
+    // Load editing product data when modal opens
+    useEffect(() => {
+        if (editingProduct) {
+            setTitle(editingProduct.title || '');
+            setPrice(editingProduct.base_price?.toString() || '');
+            setDescription(editingProduct.description || '');
+            setKeyPoints(editingProduct.benefits?.join('\n') || '');
+            setSeoTags(editingProduct.tags?.join(', ') || '');
+            setAltText(editingProduct.title || '');
+            setPreviewUrl(editingProduct.image_url || null);
+        }
+    }, [editingProduct]);
 
     const resetForm = () => {
         setImageFile(null);
@@ -108,16 +122,16 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             reader.onerror = error => reject(error);
         });
     };
-    
+
     const handleGenerateDetails = async () => {
         if (!imageFile) return;
         setIsLoadingAi(true);
         setError('');
-        
+
         try {
             const base64Image = await fileToBase64(imageFile);
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            
+
             const prompt = `You are an expert e-commerce copywriter for BAZZARO, a luxury fashion brand with a minimalist, architectural, and timeless aesthetic. Analyze the following product image.
             
             Generate the following content in the brand's tone of voice:
@@ -153,7 +167,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             });
 
             const data = JSON.parse(response.text);
-            
+
             setTitle(data.title || '');
             setDescription(data.description || '');
             setKeyPoints(data.key_points?.join('\n') || '');
@@ -196,12 +210,14 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
                 >
                     <div className="bg-brand-gray-100 w-full h-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                         <header className="flex-shrink-0 p-4 flex justify-between items-center border-b border-brand-gray-200">
-                            <h2 className="font-bold uppercase text-brand-gray-900 text-sm">Add New Product</h2>
+                            <h2 className="font-bold uppercase text-brand-gray-900 text-sm">
+                                {editingProduct ? 'Edit Product' : 'Add New Product'}
+                            </h2>
                             <button onClick={handleClose} className="p-2 text-brand-gray-500 hover:text-brand-gray-900 rounded-full transition-colors">
                                 <X size={20} />
                             </button>
                         </header>
-                        
+
                         <form onSubmit={handleSubmit} className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 p-6 overflow-y-auto">
                             {/* Left Column: Image */}
                             <div className="flex flex-col gap-4">
@@ -214,7 +230,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
                                             <p className="mt-2 text-sm font-semibold">Upload Product Image</p>
                                         </div>
                                     )}
-                                     <input type="file" accept="image/*" onChange={handleImageSelect} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    <input type="file" accept="image/*" onChange={handleImageSelect} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                 </div>
                                 <InputField label="Image Alt Text" value={altText} onChange={e => setAltText(e.target.value)} placeholder="e.g., a minimalist cream tote bag" name="altText" icon={ImageIcon} disabled={isLoadingAi} />
                             </div>
@@ -232,7 +248,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
                                 </button>
 
                                 {error && <p className="text-xs text-red-600 text-center">{error}</p>}
-                                
+
                                 <InputField label="Product Title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g., Minimalist Leather Tote" name="title" icon={Edit3} disabled={isLoadingAi} />
                                 <InputField label="Price (INR)" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g., 22999" name="price" type="number" icon={DollarSign} disabled={isLoadingAi} />
                                 <TextAreaField label="Short Description" value={description} onChange={e => setDescription(e.target.value)} placeholder="A testament to simplicity..." name="description" icon={Edit3} disabled={isLoadingAi} />
@@ -241,10 +257,12 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
 
                             </div>
                         </form>
-                        
+
                         <footer className="flex-shrink-0 p-4 flex justify-end items-center gap-4 border-t border-brand-gray-200">
                             <button type="button" onClick={handleClose} className="px-6 py-2 text-sm font-bold text-brand-gray-600 hover:bg-brand-gray-200 rounded-lg transition-colors">Cancel</button>
-                            <button type="submit" onClick={handleSubmit} className="bg-brand-gray-900 text-brand-gray-50 px-6 py-2 text-sm font-bold uppercase rounded-lg hover:bg-brand-gray-800 transition-colors">Save Product</button>
+                            <button type="submit" className="bg-brand-gray-900 text-brand-gray-50 px-6 py-2 text-sm font-bold uppercase rounded-lg hover:bg-brand-gray-800 transition-colors">
+                                {editingProduct ? 'Update Product' : 'Save Product'}
+                            </button>
                         </footer>
                     </div>
                 </motion.div>

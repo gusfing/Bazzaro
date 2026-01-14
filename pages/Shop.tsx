@@ -3,12 +3,13 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 // Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
 import * as ReactRouterDOM from 'react-router-dom';
 const { useSearchParams } = ReactRouterDOM as any;
-import { MOCK_PRODUCTS, MOCK_CATEGORIES } from '../constants';
+import { MOCK_CATEGORIES } from '../constants';
 import ProductCard from '../components/ProductCard';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { Product, ProductVariant } from '../types';
 import RewardProgress from '../components/RewardProgress';
 import { Loader2 } from 'lucide-react';
+import { getActiveProducts, initializeProducts } from '../lib/productsService';
 
 interface ShopProps {
   onAddToCart: (product: Product, variant: ProductVariant, quantity: number) => void;
@@ -25,6 +26,7 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted, 
   const [searchParams] = useSearchParams();
   const activeCategorySlug = searchParams.get('cat');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(activeCategorySlug || null);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   
   // Infinite Scroll State
   const [page, setPage] = useState(1);
@@ -40,6 +42,20 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted, 
   
   const activeCategory = useMemo(() => MOCK_CATEGORIES.find(c => c.slug === selectedCategory), [selectedCategory]);
 
+  // Load products from Firestore
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        await initializeProducts();
+        const products = await getActiveProducts();
+        setAllProducts(products);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    };
+    loadProducts();
+  }, []);
+
   useEffect(() => {
     const pageTitle = `${activeCategory ? activeCategory.name : 'The Collection'} | BAZZARO`;
     const pageDescription = `Explore the full archive of BAZZARO objects of desire. Timeless design and artisanal craft in every piece.`;
@@ -53,13 +69,13 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart, toggleWishlist, isWishlisted, 
   }, [selectedCategory, activeCategory]);
 
   const filteredProducts = useMemo(() => {
-    let products = [...MOCK_PRODUCTS];
+    let products = [...allProducts];
     if (selectedCategory) {
       const cat = MOCK_CATEGORIES.find(c => c.slug === selectedCategory);
       if (cat) products = products.filter(p => p.category_id === cat.id);
     }
     return products;
-  }, [selectedCategory]);
+  }, [selectedCategory, allProducts]);
 
   const hasMoreProducts = useMemo(() => {
     return page * PRODUCTS_PER_PAGE < filteredProducts.length;

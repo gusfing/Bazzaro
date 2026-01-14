@@ -5,12 +5,12 @@ import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
 import { X, Instagram, Twitter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User as FirebaseUser } from 'firebase/auth';
+import { User } from '@supabase/supabase-js';
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUser: FirebaseUser | null;
+  currentUser: User | null;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser }) => {
@@ -25,11 +25,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
     { label: 'Admin', path: '/admin' },
   ];
 
-  const secondaryNav = [ 
+  const secondaryNav = [
     { label: 'Boutiques', path: '/contact' },
     { label: 'Support', path: '/contact' },
     { label: 'Shipping', path: '/contact' },
-    { label: 'Privacy', path: '/contact' } 
+    { label: 'Privacy', path: '/contact' }
   ];
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
     open: { x: 0 },
     closed: { x: '100%' },
   };
-  
+
   const navItemsContainerVariants = {
     open: { transition: { staggerChildren: 0.07, delayChildren: 0.2 } },
     closed: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
@@ -103,10 +103,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
             {/* Header */}
             <div className="flex justify-between items-center p-6 border-b border-brand-gray-800">
               <Link to="/" onClick={onClose}>
-                <img 
-                  src="https://i.imgur.com/3Y01s3D.png" 
-                  alt="BAZZARO" 
-                  className="h-5 w-auto object-contain" 
+                <img
+                  src="https://i.imgur.com/3Y01s3D.png"
+                  alt="BAZZARO"
+                  className="h-5 w-auto object-contain"
                 />
               </Link>
               <button onClick={onClose} className="p-2 text-brand-gray-400 hover:text-brand-gray-50 transition-colors" aria-label="Close menu">
@@ -115,7 +115,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
             </div>
 
             {/* Main Navigation */}
-            <motion.nav 
+            <motion.nav
               variants={navItemsContainerVariants}
               initial="closed"
               animate="open"
@@ -137,17 +137,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose, currentUser })
 
             {/* Footer */}
             <div className="p-8 border-t border-brand-gray-800">
-                <div className="flex flex-wrap gap-x-6 gap-y-2 mb-6">
-                    {secondaryNav.map((item) => (
-                        <Link key={item.label} to={item.path} onClick={onClose} className="text-xs text-brand-gray-500 hover:text-brand-gray-50 transition-colors">
-                            {item.label}
-                        </Link>
-                    ))}
-                </div>
-                <div className="flex gap-6 text-brand-gray-400">
-                    <a href="#" aria-label="Instagram" className="hover:text-brand-gray-50 transition-colors cursor-pointer"><Instagram size={20} /></a>
-                    <a href="#" aria-label="Twitter" className="hover:text-brand-gray-50 transition-colors cursor-pointer"><Twitter size={20} /></a>
-                </div>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 mb-6">
+                {secondaryNav.map((item) => (
+                  <Link key={item.label} to={item.path} onClick={onClose} className="text-xs text-brand-gray-500 hover:text-brand-gray-50 transition-colors">
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="flex gap-6 text-brand-gray-400">
+                <a href="#" aria-label="Instagram" className="hover:text-brand-gray-50 transition-colors cursor-pointer"><Instagram size={20} /></a>
+                <a href="#" aria-label="Twitter" className="hover:text-brand-gray-50 transition-colors cursor-pointer"><Twitter size={20} /></a>
+              </div>
             </div>
           </motion.div>
         </>
