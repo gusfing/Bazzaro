@@ -1,0 +1,18 @@
+
+{
+  "short_name": "BAZZARO",
+  "name": "BAZZARO - Objects of Desire",
+  "icons": [
+    {
+      "src": "/BAZZARO DARK LOGO (1).png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#141414",
+  "background_color": "#141414",
+  "scope": "/"
+}

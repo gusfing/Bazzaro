@@ -1,0 +1,324 @@
+
+import { Category, Product, ProductVariant, BlogPost, Review, Coupon, AbandonedCart, CartItem, VideoReel, Bundle } from './types';
+
+export const MOCK_CATEGORIES: Category[] = [
+  { id: 'c1', name: 'Tote Bags', slug: 'totes', image_url: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7' },
+  { id: 'c2', name: 'Crossbody', slug: 'crossbody', image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa' },
+  { id: 'c3', name: 'Backpacks', slug: 'backpacks', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62' },
+  { id: 'c4', name: 'Clutches', slug: 'clutches', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d' },
+];
+
+export const MOCK_COUPONS: Coupon[] = [
+  {
+    id: 'c1',
+    code: 'BAZZARO10',
+    description: 'Get an EXTRA 10% OFF on your first order. Welcome to the archive.',
+  },
+  {
+    id: 'c2',
+    code: 'FREEGLB',
+    description: 'FREE Global Shipping on all orders above ₹12,000.',
+    min_purchase: 12000
+  }
+];
+
+export const MOCK_BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'b1',
+    title: 'The Architecture of the Perfect Tote',
+    category: 'Craft',
+    date: 'Jan 12, 2025',
+    image_url: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b',
+    excerpt: 'Exploring the dialogue between volume, structure, and the tactile nature of sustainably sourced Indian leather.'
+  },
+  {
+    id: 'b2',
+    title: 'Jaipur Hues: A Winter Intervention',
+    category: 'Editorial',
+    date: 'Dec 28, 2024',
+    image_url: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d',
+    excerpt: 'When monochrome meets the silent winter. A visual essay on our latest seasonal drop, inspired by the soul of Rajasthan.'
+  },
+  {
+    id: 'b3',
+    title: 'From Tannery to Tote: Our Sustainable Leather Story',
+    category: 'Archive',
+    date: 'Nov 15, 2024',
+    image_url: 'https://images.unsplash.com/photo-1445205170230-053b830c6050',
+    excerpt: 'A deep dive into our ethical sourcing practices and the vegetable-tanning process that gives our objects their unique character.'
+  }
+];
+
+export const MOCK_INSTAGRAM_POSTS = [
+  { id: 'ig1', url: 'https://images.unsplash.com/photo-1579631383387-9257007567b5' },
+  { id: 'ig2', url: 'https://images.unsplash.com/photo-1599371300803-344436254b42' },
+  { id: 'ig3', url: 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a' },
+  { id: 'ig4', url: 'https://images.unsplash.com/photo-1590736704728-f4730bb30770' },
+  { id: 'ig5', url: 'https://images.unsplash.com/photo-1559563458-52792b35588f' },
+  { id: 'ig6', url: 'https://images.unsplash.com/photo-1572196285227-31238b165434' },
+];
+
+export const MOCK_VIDEO_REELS: VideoReel[] = [
+  {
+    id: 'vr1',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-striped-blouse-puts-her-bag-on-the-43574-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-in-a-striped-blouse-puts-her-bag-on-the-43574.jpg',
+    title: 'City Commute'
+  },
+  {
+    id: 'vr2',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-fast-fashion-video-collage-of-a-woman-in-a-studio-34132-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-fast-fashion-video-collage-of-a-woman-in-a-studio-34132.jpg',
+    title: 'Studio Session'
+  },
+  {
+    id: 'vr3',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-walking-in-a-gift-shop-43573-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-walking-in-a-gift-shop-43573.jpg',
+    title: 'The Selection'
+  },
+  {
+    id: 'vr4',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-in-a-black-hat-in-a-field-of-dry-flowers-39951-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-in-a-black-hat-in-a-field-of-dry-flowers-39951.jpg',
+    title: 'Autumnal Mood'
+  },
+  {
+    id: 'vr5',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-posing-for-the-camera-in-a-room-with-a-retro-ambience-39942-large.mp4',
+    posterUrl: 'https://assets.mixkit.co/videos/snapshot/large/mixkit-woman-posing-for-the-camera-in-a-room-with-a-retro-ambience-39942.jpg',
+    title: 'Interior Space'
+  }
+];
+
+const createVariants = (productId: string, colors: {name: string, hex: string}[]): ProductVariant[] => 
+  colors.map(c => ({
+    id: `${productId}-${c.name.toLowerCase().replace(/\s+/g, '-')}`,
+    product_id: productId,
+    size: 'OS',
+    color: c.name,
+    hex: c.hex,
+    stock_quantity: Math.random() > 0.2 ? Math.floor(Math.random() * 50) + 1 : 0, // 80% chance of being in stock
+    sku: `${productId}-${c.name.substring(0, 3).toUpperCase()}`
+  }));
+
+export const MOCK_PRODUCTS: Product[] = [
+  {
+    id: 'p1',
+    title: 'Minimalist Leather Tote',
+    slug: 'minimalist-leather-tote',
+    description: 'Grain leather tote with raw edges and internal pocket. A testament to simplicity, designed for the modern essentialist. Its unstructured form allows for versatile use, from daily commutes to weekend escapes.',
+    base_price: 22999,
+    category_id: 'c1',
+    image_url: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3',
+    other_images: [
+      'https://images.unsplash.com/photo-1544816155-12df9643f363',
+      'https://images.unsplash.com/photo-1591561954555-607ef358dcc2'
+    ],
+    is_active: true,
+    variants: createVariants('p1', [{name: 'Onyx', hex: '#111111'}, {name: 'Cream', hex: '#F5F5DC'}, {name: 'Cognac', hex: '#8B4513'}]),
+    tags: ['Leather', 'Handmade', 'Minimalist'],
+    rating: 4.9,
+    reviews_count: 124,
+    materials: '100% Sustainably Sourced Full-Grain Indian Leather, Unlined Suede Interior',
+    dimensions: '35cm H x 45cm W x 15cm D',
+    is_new: true,
+    benefits: [
+        'Made with vegetable-tanned, low-impact leather',
+        'Spacious enough for daily essentials',
+        'A quiet statement of conscious luxury'
+    ],
+    lifestyle_images: [
+        'https://images.unsplash.com/photo-1559563458-52792b35588f',
+        'https://images.unsplash.com/photo-1590736704728-f4730bb30770',
+        'https://images.unsplash.com/photo-1572196285227-31238b165434'
+    ],
+    care_instructions: 'Wipe with a soft, dry cloth. For deeper cleaning, use a specialist leather conditioner. Avoid prolonged exposure to direct sunlight and water to maintain the integrity of the full-grain leather.',
+    reviews: [
+      { id: 'r1', author: 'Priya S.', rating: 5, title: 'Perfectly understated.', content: 'The quality of the leather is exceptional. It’s my new everyday bag and it holds everything I need without feeling bulky. Truly a timeless piece.', date: '2023-10-15' },
+      { id: 'r2', author: 'Rohan K.', rating: 5, title: 'Masterpiece of minimalism.', content: 'I appreciate the raw edges and the unlined interior. It feels authentic and incredibly well-made. Worth every penny.', date: '2023-09-28' },
+      { id: 'r3', author: 'Ananya R.', rating: 4, title: 'Beautiful but simple.', content: 'A gorgeous bag. My only wish is that it had a small clasp or magnet at the top, but the open design is part of its aesthetic.', date: '2023-09-12' },
+    ],
+    faq: [
+        { question: 'Is the internal pocket large enough for a phone?', answer: 'Yes, the internal pocket is designed to comfortably fit most modern smartphones, including larger models.' },
+        { question: 'How does the leather age over time?', answer: 'The full-grain Indian leather will develop a unique patina, becoming softer and richer with age and use. This is a natural characteristic of high-quality, vegetable-tanned leather.' },
+    ]
+  },
+  {
+    id: 'p3',
+    title: 'Sculptural Satchel',
+    slug: 'sculptural-satchel',
+    description: 'Hand-crafted structured satchel with silver-tone hardware. Its architectural form is a statement piece, blending traditional craftsmanship with avant-garde design. Features a magnetic clasp and a detachable shoulder strap.',
+    base_price: 35999,
+    category_id: 'c2',
+    image_url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa',
+    other_images: [
+      'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d'
+    ],
+    is_active: true,
+    variants: createVariants('p3', [{name: 'Obsidian', hex: '#000000'}, {name: 'Midnight Blue', hex: '#191970'}]),
+    tags: ['Luxury', 'Limited Edition', 'Couture'],
+    rating: 5.0,
+    reviews_count: 56,
+    materials: 'Ethically Sourced Indian Box Calfskin Leather, Polished Titanium Hardware',
+    dimensions: '22cm H x 28cm W x 12cm D',
+    benefits: ['Architectural statement piece', 'Detachable strap for versatile styling', 'Secure magnetic clasp closure'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1599371300803-344436254b42', 'https://images.unsplash.com/photo-1612199103986-2800c8b6a35a', 'https://images.unsplash.com/photo-1579631383387-9257007567b5'],
+    care_instructions: 'Handle with care. Entrust to a professional leather cleaner for maintenance. Store in the provided dust bag.',
+    reviews: [
+      { id: 'r4', author: 'Ishita M.', rating: 5, title: 'A work of art.', content: 'This is more than a bag; it\'s a piece of sculpture. The lines are incredible and the hardware is exquisite. I receive compliments every time I wear it.', date: '2023-11-02' },
+      { id: 'r5', author: 'Aria C.', rating: 5, title: 'Beyond expectations.', content: 'The craftsmanship is flawless. It feels incredibly luxurious and the structured shape is very sophisticated. A true investment piece.', date: '2023-10-21' },
+    ],
+    faq: [
+      { question: 'Can the shoulder strap be adjusted?', answer: 'Yes, the detachable shoulder strap is fully adjustable for crossbody or shoulder wear.' },
+      { question: 'What is Box Calfskin?', answer: 'It is a type of firm, fine-grained leather known for its smooth finish and ability to hold a rigid shape, making it ideal for structured bags.' },
+    ]
+  },
+  {
+    id: 'p2', title: 'The Neo-Backpack', slug: 'neo-backpack', description: 'Weatherproof technical fabric with magnetic closures.', base_price: 14999, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62', other_images: ['https://images.unsplash.com/photo-1622560480605-d83c853bc5c3'], is_active: true, variants: createVariants('p2', [{name: 'Stealth Black', hex: '#0A0A0A'}, {name: 'Ghost Gray', hex: '#A9A9A9'}]), tags: ['Techwear', 'Waterproof', 'Urban'], rating: 4.7, reviews_count: 89, is_new: true,
+    materials: 'Weatherproof technical fabric, AquaGuard zippers, Recycled linings',
+    dimensions: '45cm H x 30cm W x 15cm D',
+    benefits: ['Urban-ready weatherproof design', 'Multiple compartments for organization', 'Lightweight and durable for daily commute'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1577733975221-a56708e1634b', 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9e', 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3'],
+    care_instructions: 'Spot clean with mild soap and water. Air dry.',
+    faq: [
+        { question: 'Is the laptop compartment padded?', answer: 'Yes, the Neo-Backpack features a dedicated, padded compartment that fits up to a 15-inch laptop, providing excellent protection.' },
+        { question: 'How do I clean the weatherproof fabric?', answer: 'We recommend spot cleaning with a soft cloth, mild soap, and water. Do not machine wash or use harsh detergents to preserve the fabric\'s integrity.' }
+    ]
+  },
+  {
+    id: 'p4', title: 'Obsidian Pouch', slug: 'obsidian-pouch', description: 'Sleek, slim-profile evening clutch in matte finish.', base_price: 9999, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d', other_images: ['https://images.unsplash.com/photo-1590736704728-f4730bb30770'], is_active: true, variants: createVariants('p4', [{name: 'Matte Onyx', hex: '#1C1C1C'}]), tags: ['Evening', 'Matte', 'Essentials'], rating: 4.8, reviews_count: 210,
+    materials: 'Matte-finish vegan leather, polished gunmetal hardware',
+    dimensions: '15cm H x 25cm W x 5cm D',
+    benefits: ['Sleek profile for evening essentials', 'Minimalist, hardware-free design', 'Fits comfortably in hand'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1572196285227-31238b165434', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b', 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d'],
+    care_instructions: 'Wipe gently with a soft, dry cloth.',
+    faq: [
+        { question: 'What can the Obsidian Pouch hold?', answer: 'It is designed to carry your evening essentials: a smartphone, cards, keys, and lipstick. It is not intended for bulky items.' },
+        { question: 'Does the matte finish scratch easily?', answer: 'The matte-finish vegan leather is durable for normal use, but we recommend avoiding contact with sharp or abrasive surfaces to maintain its pristine look.' }
+    ]
+  },
+  {
+    id: 'p5', title: 'Utility Duffel', slug: 'utility-duffel', description: 'Oversized travel bag with reinforced straps.', base_price: 25999, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1547949003-9792a18a2601', other_images: ['https://images.unsplash.com/photo-1605309424345-3d88b4c7336a'], is_active: true, variants: createVariants('p5', [{name: 'Carbon', hex: '#333333'}, {name: 'Olive', hex: '#556B2F'}]), tags: ['Travel', 'Durable', 'Large'], rating: 4.6, reviews_count: 42,
+    materials: 'Heavy-duty ballistic nylon, reinforced leather handles',
+    dimensions: '30cm H x 55cm W x 25cm D',
+    benefits: ['Spacious interior for weekend travel', 'Durable, abrasion-resistant fabric', 'Multiple pockets for easy access'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1616254443697-98f1f75003c4', 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d', 'https://images.unsplash.com/photo-1605309424345-3d88b4c7336a'],
+    care_instructions: 'Spot clean with a damp cloth. Do not machine wash.',
+  },
+  {
+    id: 'p6', title: 'Miniature Crossbody', slug: 'mini-crossbody', description: 'Compact essential bag with adjustable chain strap.', base_price: 12999, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1594223274512-ad4803739b7c', other_images: ['https://images.unsplash.com/photo-1610290499424-9368d374d758'], is_active: true, variants: createVariants('p6', [{name: 'Gold Glow', hex: '#C9A050'}, {name: 'Rose Dust', hex: '#BC8F8F'}]), tags: ['Mini', 'Summer', 'Chain'], rating: 4.9, reviews_count: 178,
+    materials: 'Saffiano-textured leather, gold-tone chain strap',
+    dimensions: '12cm H x 18cm W x 6cm D',
+    benefits: ['Compact size for phone, keys, and cards', 'Elegant chain strap adds a touch of luxury', 'Perfect for hands-free convenience'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1594223274512-ad4803739b7c', 'https://images.unsplash.com/photo-1610290499424-9368d374d758', 'https://images.unsplash.com/photo-1559563458-52792b35588f'],
+    care_instructions: 'Wipe with a soft cloth. Store the chain strap inside the bag to prevent scratching the leather.',
+  },
+  {
+    id: 'p7', title: 'Brutalist Briefcase', slug: 'brutalist-briefcase', description: 'Square-cut professional bag for the modern creative.', base_price: 29999, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62', other_images: [], is_active: true, variants: createVariants('p7', [{name: 'Steel', hex: '#708090'}]), tags: ['Professional', 'Unisex', 'Architecture'], rating: 4.7, reviews_count: 29,
+    materials: 'Structured Indian leather, stainless steel hardware',
+    dimensions: '28cm H x 38cm W x 8cm D',
+    benefits: ['Fits a 15" laptop and documents', 'Modern, architectural silhouette', 'Detachable shoulder strap for comfort'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62', 'https://images.unsplash.com/photo-1590736704728-f4730bb30770', 'https://images.unsplash.com/photo-1572196285227-31238b165434'],
+    care_instructions: 'Use a specialist leather conditioner. Avoid prolonged exposure to direct sunlight.',
+  },
+  {
+    id: 'p8', title: 'Cloud Tote', slug: 'cloud-tote', description: 'Padded, ultra-lightweight fabric tote for daily use.', base_price: 7999, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1606170033648-5d55a3df3045', other_images: [], is_active: true, variants: createVariants('p8', [{name: 'White Cloud', hex: '#FFFFFF'}, {name: 'Soft Blue', hex: '#ADD8E6'}]), tags: ['Lightweight', 'Everyday', 'Padded'], rating: 4.5, reviews_count: 312,
+    materials: 'Recycled padded nylon fabric, lightweight construction',
+    dimensions: '40cm H x 50cm W x 20cm D',
+    benefits: ['Ultra-lightweight for effortless carry', 'Puffy, cloud-like texture', 'Spacious enough for daily essentials and more'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1606170033648-5d55a3df3045', 'https://images.unsplash.com/photo-1547949003-9792a18a2601', 'https://images.unsplash.com/photo-1584917865442-de89df76afd3'],
+    care_instructions: 'Gentle machine wash cold, or hand wash. Lay flat to dry.',
+  },
+  {
+    id: 'p9', title: 'Architectural Sling', slug: 'architectural-sling', description: 'Sharp-angled crossbody bag with hidden compartments.', base_price: 16999, category_id: 'c2', image_url: 'https://images.unsplash.com/photo-1591561954557-26941169b49e', other_images: ['https://images.unsplash.com/photo-1591561954555-607ef358dcc2'], is_active: true, variants: createVariants('p9', [{name: 'Ash', hex: '#B2B2B2'}, {name: 'Charcoal', hex: '#363636'}]), tags: ['Sling', 'Geometric', 'Modern'], rating: 4.8, reviews_count: 67,
+    materials: 'Smooth full-grain Indian leather, concealed magnetic closures',
+    dimensions: '18cm H x 30cm W x 10cm D',
+    benefits: ['Unique geometric design', 'Multiple hidden compartments for security', 'Adjustable strap for a perfect fit'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1591561954557-26941169b49e', 'https://images.unsplash.com/photo-1591561954555-607ef358dcc2', 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa'],
+    care_instructions: 'Wipe with a soft, dry cloth. For deeper cleaning, use a specialist leather conditioner.',
+  },
+  {
+    id: 'p10', title: 'Canvas Monolith Tote', slug: 'canvas-monolith', description: 'Heavyweight waxed canvas tote with industrial rivets.', base_price: 11999, category_id: 'c1', image_url: 'https://images.unsplash.com/photo-1544816155-12df9643f363', other_images: [], is_active: true, variants: createVariants('p10', [{name: 'Ecru', hex: '#F0EAD6'}, {name: 'Slate', hex: '#708090'}]), tags: ['Canvas', 'Industrial', 'Oversized'], rating: 4.7, reviews_count: 142,
+    materials: '18oz waxed canvas, copper rivets, leather trim',
+    dimensions: '40cm H x 55cm W x 18cm D',
+    benefits: ['Extremely durable and water-resistant', 'Develops a unique patina over time', 'Large capacity for versatile use'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1544816155-12df9643f363', 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7', 'https://images.unsplash.com/photo-1547949003-9792a18a2601'],
+    care_instructions: 'Do not wash or dry clean. Use a soft brush to clean. Re-wax as needed to maintain water resistance.',
+  },
+  {
+    id: 'p11', title: 'Modular Commuter', slug: 'modular-commuter', description: 'Technical backpack with detachable utility pouches.', base_price: 21999, category_id: 'c3', image_url: 'https://images.unsplash.com/photo-1581605405669-fcdf81165afa', other_images: [], is_active: true, variants: createVariants('p11', [{name: 'Nightshade', hex: '#1C1C1C'}, {name: 'Tundra', hex: '#EAEAEA'}]), tags: ['Technical', 'Modular', 'Work'], rating: 4.9, reviews_count: 31,
+    materials: 'CORDURA® ballistic fabric, Fidlock® magnetic buckles',
+    dimensions: '48cm H x 32cm W x 16cm D',
+    benefits: ['Modular pouches for customizable organization', 'Highly durable and weather-resistant', 'Padded laptop compartment (up to 16")'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1581605405669-fcdf81165afa', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62', 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3'],
+    care_instructions: 'Spot clean with a damp cloth. Do not use detergents.',
+  },
+  {
+    id: 'p12', title: 'Geometric Frame Clutch', slug: 'geometric-frame-clutch', description: 'Hard-shell clutch with an asymmetrical clasp.', base_price: 27999, category_id: 'c4', image_url: 'https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d', other_images: [], is_active: true, variants: createVariants('p12', [{name: 'Obsidian', hex: '#000000'}, {name: 'Bone', hex: '#E3DAC9'}]), tags: ['Evening', 'Structured', 'Artistic'], rating: 5.0, reviews_count: 24,
+    materials: 'Polished acrylic hard-shell, satin lining',
+    dimensions: '12cm H x 20cm W x 5cm D',
+    benefits: ['A sculptural, artistic statement piece', 'Unique asymmetrical clasp', 'Protective hard-shell case for your essentials'],
+    lifestyle_images: ['https://images.unsplash.com/photo-1566150905458-1bf1fd113f0d', 'https://images.unsplash.com/photo-1572196285227-31238b165434', 'https://images.unsplash.com/photo-1601924991839-5555f3088b2b'],
+    care_instructions: 'Wipe with a soft, lint-free cloth. Avoid contact with harsh chemicals or abrasive surfaces.',
+  },
+];
+
+export const MOCK_BUNDLES: Bundle[] = [
+  {
+    id: 'b1',
+    title: 'The Everyday Essentials Set',
+    productIds: ['p1', 'p4'],
+    bundle_price: 31000,
+  },
+  {
+    id: 'b2',
+    title: 'The Weekender Kit',
+    productIds: ['p5', 'p6'],
+    bundle_price: 37000,
+  },
+];
+
+const createCartItem = (product: Product, variantIndex: number, quantity: number): CartItem => ({
+    variantId: product.variants[variantIndex].id,
+    productId: product.id,
+    title: product.title,
+    price: product.base_price,
+    size: product.variants[variantIndex].size,
+    color: product.variants[variantIndex].color,
+    image: product.image_url,
+    quantity: quantity,
+});
+
+export const MOCK_ABANDONED_CARTS: AbandonedCart[] = [
+    {
+        id: 'ac1',
+        customerName: 'Elena V.',
+        customerPhone: '+12345678901',
+        lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        items: [createCartItem(MOCK_PRODUCTS[1], 0, 1)],
+        totalValue: MOCK_PRODUCTS[1].base_price,
+        status: 'Pending',
+    },
+    {
+        id: 'ac2',
+        customerName: 'Marcus R.',
+        customerPhone: '+19876543210',
+        lastActive: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        items: [
+            createCartItem(MOCK_PRODUCTS[0], 2, 1),
+            createCartItem(MOCK_PRODUCTS[3], 0, 1)
+        ],
+        totalValue: MOCK_PRODUCTS[0].base_price + MOCK_PRODUCTS[3].base_price,
+        status: 'Pending',
+    },
+    {
+        id: 'ac3',
+        customerName: 'Guest User',
+        customerPhone: '+15551234567',
+        lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
+        items: [createCartItem(MOCK_PRODUCTS[4], 1, 1)],
+        totalValue: MOCK_PRODUCTS[4].base_price,
+        status: 'Reminder Sent',
+    }
+];

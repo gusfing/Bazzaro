@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bazzaro | Objects of Desire</title>
+    <meta name="description" content="A complete, production-ready fashion e-commerce template featuring minimalist design, luxury brand aesthetics, and a seamless user experience.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#141414" />
+    <link rel="apple-touch-icon" href="/bazzaro-logo.png" />
+    
+    <link rel="canonical" href="https://bazzaro.example.com" />
+    
+    <!-- Temporary Tailwind CDN fallback while local CSS loads -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Oswald', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+            colors: {
+              brand: {
+                espresso: '#1A0F0A',
+                cocoa: '#2D1B14',
+                sepia: '#5C4033',
+                tan: '#A67B5B',
+                sand: '#C19A6B',
+                oat: '#E5D3B3',
+                cloud: '#F0EEE9',
+                gold: '#D4AF37',
+                gray: {
+                    50: '#FAFAFA',
+                    100: '#F5F5F5',
+                    200: '#EEEEEE',
+                    300: '#E0E0E0',
+                    400: '#BDBDBD',
+                    500: '#9E9E9E',
+                    600: '#757575',
+                    700: '#616161',
+                    800: '#424242',
+                    900: '#212121',
+                    950: '#141414',
+                },
+                success: '#4CAF50',
+                warning: '#FFC107',
+                error: '#F44336',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- GSAP Scripts with correct integrity -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <style>
+      html { scroll-behavior: smooth; }
+      body {
+        overscroll-behavior-y: contain;
+        background-color: #141414;
+        overflow-x: hidden;
+      }
+      ::-webkit-scrollbar { display: none; }
+      
+      .stroke-text { -webkit-text-stroke: 1px currentColor; }
+      
+      .glass {
+        background: rgba(240, 238, 233, 0.05);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(240, 238, 233, 0.1);
+      }
+      
+      .glass-dark {
+        background: rgba(20, 20, 20, 0.75);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .ui-card-light {
+        background: #FAFAFA;
+        backdrop-filter: blur(12px);
+        border-radius: 1.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        color: #212121;
+        border: 1px solid rgba(255,255,255,0.8);
+      }
+      
+      .text-gradient-bazzaro {
+        background-image: linear-gradient(to bottom, rgba(255,255,255,0.8) 40%, rgba(255,255,255,0));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      
+      .noise::after {
+        content: "";
+        position: fixed;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+        opacity: 0.04;
+        z-index: 9999;
+        pointer-events: none;
+        animation: noise-move 0.2s infinite;
+      }
+      
+      .shimmer::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          rgba(255, 255, 255, 0.04) 20%,
+          rgba(255, 255, 255, 0.08) 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 2s infinite;
+      }
+      
+      @keyframes noise-move {
+        0% { transform: translate(0,0); }
+        100% { transform: translate(1%,1%); }
+      }
+      
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      
+      .animate-reveal { animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      @keyframes reveal {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .animate-marquee { animation: marquee 35s linear infinite; }
+      .animate-marquee-products { animation: marquee 80s linear infinite; }
+      .animate-marquee-products:hover { animation-play-state: paused; }
+      
+      .animate-float { animation: float 6s ease-in-out infinite; }
+      @keyframes float {
+        0% { transform: translatey(0px); }
+        50% { transform: translatey(-10px); }
+        100% { transform: translatey(0px); }
+      }
+      
+      .animate-text-focus-in { animation: text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both; }
+      @keyframes text-focus-in {
+        0% { filter: blur(12px); opacity: 0; }
+        100% { filter: blur(0px); opacity: 1; }
+      }
+      
+      .animate-slide-in-bottom { animation: slide-in-bottom 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) both; }
+      @keyframes slide-in-bottom {
+        0% { transform: translateY(100px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+      }
+      
+      .animate-pulse-dot { animation: pulse-dot 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+      @keyframes pulse-dot {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.4); opacity: 1; }
+      }
+    </style>
+    
+    <!-- Import Maps -->
+    <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom/server": "https://aistudiocdn.com/react-dom@^19.2.0/server",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.0",
+    "motion/react": "https://aistudiocdn.com/framer-motion@^11.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "firebase/app": "https://esm.run/firebase@10.12.2/app",
+    "firebase/auth": "https://esm.run/firebase@10.12.2/auth",
+    "firebase/storage": "https://esm.run/firebase@10.12.2/storage",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/"
+  }
+}
+</script>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "BAZZARO",
+      "url": "https://bazzaro.example.com",
+      "logo": "https://i.imgur.com/3Y01s3D.png",
+      "sameAs": [
+        "https://www.instagram.com/bazzaro_archive",
+        "https://twitter.com/bazzaro_archive"
+      ]
+    }
+    </script>
+  </head>
+  <body class="text-brand-gray-100 antialiased selection:bg-brand-tan selection:text-white noise">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
