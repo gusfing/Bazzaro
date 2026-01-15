@@ -1,79 +1,99 @@
-
-import React, { useState, useEffect } from 'react';
-
-type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-
-const mockOrdersData = [
-  { id: '#ORD-2931', customer: 'Alex Doe', date: 'Oct 24, 2023', total: 12999, status: 'Processing' as OrderStatus },
-  { id: '#ORD-2930', customer: 'Sarah Smith', date: 'Oct 23, 2023', total: 7999, status: 'Shipped' as OrderStatus },
-  { id: '#ORD-2929', customer: 'Mike Jordan', date: 'Oct 23, 2023', total: 21999, status: 'Delivered' as OrderStatus },
-  { id: '#ORD-2928', customer: 'Jane Foster', date: 'Oct 22, 2023', total: 35999, status: 'Delivered' as OrderStatus },
-  { id: '#ORD-2927', customer: 'Chris Evans', date: 'Oct 21, 2023', total: 9999, status: 'Cancelled' as OrderStatus },
-];
-
-const statusColors: { [key in OrderStatus]: string } = {
-  Processing: 'bg-yellow-100 text-yellow-800',
-  Shipped: 'bg-indigo-100 text-indigo-800',
-  Delivered: 'bg-blue-100 text-blue-800',
-  Cancelled: 'bg-brand-gray-200 text-brand-gray-800',
-};
+import React, { useEffect, useState } from 'react';
+import { OrdersService } from '../../lib/database_supabase';
+import { Order, OrderStatus } from '../../types';
+import { Eye, Trash2 } from 'lucide-react';
 
 const AdminOrders: React.FC = () => {
-    const [orders, setOrders] = useState(mockOrdersData);
-    
-    useEffect(() => {
-      document.title = 'Manage Orders | BAZZARO Admin';
-    }, []);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-        setOrders(prevOrders => 
-            prevOrders.map(order => 
-                order.id === orderId ? { ...order, status: newStatus } : order
-            )
-        );
-    };
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      const data = await OrdersService.getAll();
+      setOrders(data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load orders');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case OrderStatus.DELIVERED: return <span className="badge badge-success">Delivered</span>;
+      case OrderStatus.PROCESSING: return <span className="badge badge-warning">Processing</span>;
+      case OrderStatus.SHIPPED: return <span className="badge badge-primary">Shipped</span>;
+      case OrderStatus.CANCELLED: return <span className="badge badge-danger">Cancelled</span>;
+      default: return <span className="badge badge-secondary">{status}</span>;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold uppercase text-brand-gray-900">Orders</h1>
-      </div>
-
-      <div className="bg-white border border-brand-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-brand-gray-50 text-brand-gray-500 font-medium uppercase text-xs">
-              <tr>
-                <th className="px-6 py-4">Order ID</th>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Total</th>
-                <th className="px-6 py-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-gray-100">
-              {orders.map(order => (
-                <tr key={order.id}>
-                  <td className="px-6 py-4 font-mono text-brand-gray-600">{order.id}</td>
-                  <td className="px-6 py-4 font-bold text-brand-gray-900">{order.customer}</td>
-                  <td className="px-6 py-4 text-brand-gray-500">{order.date}</td>
-                  <td className="px-6 py-4 font-bold text-brand-gray-900">₹{order.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td className="px-6 py-4">
-                     <select 
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                        className={`text-xs font-bold uppercase rounded-sm border-none focus:ring-0 ${statusColors[order.status]}`}
-                     >
-                        <option value="Processing">Processing</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                     </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="row">
+      <div className="col-lg-12">
+        <div className="card">
+          <div className="card-header">
+            <h4 className="card-title">Order List</h4>
+          </div>
+          <div className="card-body">
+            {error && <div className="alert alert-danger">{error}</div>}
+            <div className="table-responsive">
+              <table className="table table-responsive-md">
+                <thead>
+                  <tr>
+                    <th style={{ width: '80px' }}><strong>#</strong></th>
+                    <th><strong>ORDER ID</strong></th>
+                    <th><strong>DATE</strong></th>
+                    <th><strong>CUSTOMER</strong></th>
+                    <th><strong>TOTAL</strong></th>
+                    <th><strong>STATUS</strong></th>
+                    <th><strong>ACTION</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order, i) => (
+                    <tr key={order.id}>
+                      <td><strong>{i + 1}</strong></td>
+                      <td>#{order.id.substring(0, 8)}...</td>
+                      <td>{new Date(order.date).toLocaleDateString()}</td>
+                      <td>{order.customerName}</td>
+                      <td>${order.total.toFixed(2)}</td>
+                      <td>{getStatusBadge(order.status as OrderStatus || order.status)}</td>
+                      <td>
+                        <div className="d-flex">
+                          <button className="btn btn-primary shadow btn-xs sharp me-1">
+                            <Eye size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {orders.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="text-center">No recent orders.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

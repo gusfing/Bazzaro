@@ -35,13 +35,13 @@ import MobileMenu from './components/MobileMenu';
 import { MOCK_PRODUCTS } from './constants';
 
 // Admin Imports
+// Admin Imports
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminProducts from './pages/admin/AdminProducts';
+import AdminProductForm from './pages/admin/AdminProductForm';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCustomers from './pages/admin/AdminCustomers';
-import AdminCartAbandonment from './pages/admin/AdminCartAbandonment';
 import RequireAdmin from './components/RequireAdmin';
 
 
@@ -312,9 +312,10 @@ const AppContent: React.FC = () => {
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<PageTransition><AdminDashboard /></PageTransition>} />
                 <Route path="products" element={<PageTransition><AdminProducts /></PageTransition>} />
+                <Route path="products/add" element={<PageTransition><AdminProductForm /></PageTransition>} />
+                <Route path="products/edit/:id" element={<PageTransition><AdminProductForm /></PageTransition>} />
                 <Route path="orders" element={<PageTransition><AdminOrders /></PageTransition>} />
                 <Route path="customers" element={<PageTransition><AdminCustomers /></PageTransition>} />
-                <Route path="cart-abandonment" element={<PageTransition><AdminCartAbandonment /></PageTransition>} />
               </Route>
 
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />

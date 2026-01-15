@@ -22,7 +22,7 @@ export interface User {
 
 // Category Entity
 export interface Category {
-  id:string;
+  id: string;
   name: string;
   image_url: string;
   slug: string;
@@ -61,6 +61,7 @@ export interface Product {
   other_images: string[];
   is_active: boolean;
   variants: ProductVariant[];
+  stock_quantity?: number;
   tags?: string[];
   rating?: number;
   reviews_count?: number;
@@ -100,13 +101,13 @@ export interface CartItem {
 
 // Order Entity
 export interface Order {
-    id: string;
-    items: CartItem[];
-    total: number;
-    date: string;
-    customerName: string;
-    walletCreditUsed?: number;
-    creditsEarned?: number;
+  id: string;
+  items: CartItem[];
+  total: number;
+  date: string;
+  customerName: string;
+  walletCreditUsed?: number;
+  creditsEarned?: number;
 }
 
 // Coupon Entity

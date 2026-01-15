@@ -1,55 +1,86 @@
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import { User, Mail } from 'lucide-react';
 
-import React, { useEffect } from 'react';
-import { Mail, Phone } from 'lucide-react';
-
-const mockCustomers = [
-  { id: 'u1', name: 'Alex Doe', email: 'alex.doe@example.com', totalOrders: 3, totalSpent: 45550 },
-  { id: 'u2', name: 'Sarah Smith', email: 'sarah.s@example.com', totalOrders: 1, totalSpent: 7999 },
-  { id: 'u3', name: 'Mike Jordan', email: 'mike.j@example.com', totalOrders: 5, totalSpent: 102500 },
-  { id: 'u4', name: 'Jane Foster', email: 'jane.foster@example.com', totalOrders: 2, totalSpent: 75998 },
-  { id: 'u5', name: 'Chris Evans', email: 'chris.e@example.com', totalOrders: 1, totalSpent: 9999 },
-];
+interface CustomerProfile {
+  id: string;
+  email: string;
+  full_name?: string;
+  created_at: string;
+}
 
 const AdminCustomers: React.FC = () => {
-  useEffect(() => {
-    document.title = 'Manage Customers | BAZZARO Admin';
-  }, []);
-  
-  return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold uppercase text-brand-gray-900">Customers</h1>
-      </div>
+  const [customers, setCustomers] = useState<CustomerProfile[]>([]);
+  const [loading, setLoading] = useState(true);
 
-      <div className="bg-white border border-brand-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-brand-gray-50 text-brand-gray-500 font-medium uppercase text-xs">
-              <tr>
-                <th className="px-6 py-4">Customer</th>
-                <th className="px-6 py-4">Total Orders</th>
-                <th className="px-6 py-4">Total Spent</th>
-                <th className="px-6 py-4 text-right">Contact</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-brand-gray-100">
-              {mockCustomers.map(customer => (
-                <tr key={customer.id}>
-                  <td className="px-6 py-4">
-                    <div className="font-bold text-brand-gray-900">{customer.name}</div>
-                    <div className="text-xs text-brand-gray-500">{customer.email}</div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-brand-gray-700">{customer.totalOrders}</td>
-                  <td className="px-6 py-4 font-bold text-brand-gray-900">₹{customer.totalSpent.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                        <a href={`mailto:${customer.email}`} className="p-2 text-brand-gray-400 hover:text-brand-gray-900 hover:bg-brand-gray-100 rounded-md transition-colors"><Mail size={16} /></a>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setCustomers((data as any) || []);
+      } catch (err) {
+        console.error("Error fetching customers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
+
+  if (loading) return <div>Loading Customers...</div>;
+
+  return (
+    <div className="row">
+      <div className="col-lg-12">
+        <div className="card">
+          <div className="card-header">
+            <h4 className="card-title">Registered Customers</h4>
+          </div>
+          <div className="card-body">
+            <div className="table-responsive">
+              <table className="table table-responsive-md">
+                <thead>
+                  <tr>
+                    <th style={{ width: '50px' }}>#</th>
+                    <th><strong>NAME</strong></th>
+                    <th><strong>EMAIL</strong></th>
+                    <th><strong>JOINED DATE</strong></th>
+                    <th><strong>ACTION</strong></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {customers.map((cust, i) => (
+                    <tr key={cust.id}>
+                      <td><strong>{i + 1}</strong></td>
+                      <td>
+                        <div className="d-flex align-items-center">
+                          <span className="w-space-no">{cust.full_name || 'N/A'}</span>
+                        </div>
+                      </td>
+                      <td>{cust.email}</td>
+                      <td>{new Date(cust.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <div className="d-flex">
+                          <a href={`mailto:${cust.email}`} className="btn btn-primary shadow btn-xs sharp me-1">
+                            <Mail size={14} />
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {customers.length === 0 && (
+                    <tr><td colSpan={5} className="text-center">No customers found.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

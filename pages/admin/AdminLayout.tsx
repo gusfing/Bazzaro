@@ -1,102 +1,188 @@
+import React, { useEffect, useState } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { LogOut, User, Bell, Search, Menu } from 'lucide-react';
 
-import React, { useState } from 'react';
-// Fix: Use namespace import and cast to 'any' to work around broken type definitions for react-router-dom
-import * as ReactRouterDOM from 'react-router-dom';
-const { NavLink, Link } = ReactRouterDOM as any;
-import {
-  LayoutDashboard, Package, ShoppingCart, Users, LogOut, ArrowLeft,
-  History, Tag, Settings, BarChart3, Menu, X
-} from 'lucide-react';
+// Helper to check if script is already loaded
+const isScriptLoaded = (src: string) => {
+  return document.querySelector(`script[src="${src}"]`);
+};
 
-interface AdminLayoutProps {
-  children?: React.ReactNode;
-}
+const loadScript = (src: string) => {
+  return new Promise((resolve, reject) => {
+    if (isScriptLoaded(src)) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+};
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const AdminLayout: React.FC = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
 
-  const navItems = [
-    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
-    { name: 'Products', path: '/admin/products', icon: Package },
-    { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
-    { name: 'Customers', path: '/admin/customers', icon: Users },
-    { name: 'Abandonment', path: '/admin/cart-abandonment', icon: History },
-  ];
+  useEffect(() => {
+    // Load Admin CSS
+    const cssFiles = [
+      '/admin-assets/vendor/swiper/css/swiper-bundle.min.css',
+      '/admin-assets/vendor/datatables/css/jquery.dataTables.min.css',
+      '/admin-assets/vendor/bootstrap-select/css/bootstrap-select.min.css',
+      '/admin-assets/vendor/jqvmap/css/jqvmap.min.css',
+      '/admin-assets/css/style.css'
+    ];
+
+    const links: HTMLLinkElement[] = [];
+    cssFiles.forEach(href => {
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement('link');
+        link.href = href;
+        link.rel = 'stylesheet';
+        link.className = 'admin-css'; // Marker class to remove later if needed
+        document.head.appendChild(link);
+        links.push(link);
+      }
+    });
+
+    // Scripts to load primarily for layout interaction
+    // We strictly control the order
+    const loadScripts = async () => {
+      try {
+        await loadScript('/admin-assets/vendor/global/global.min.js');
+        await loadScript('/admin-assets/vendor/bootstrap-select/js/bootstrap-select.min.js');
+        // Custom scripts - might need distinct loading if they rely on DOM presence
+        await loadScript('/admin-assets/js/custom.min.js');
+        await loadScript('/admin-assets/js/ic-sidenav-init.js');
+      } catch (err) {
+        console.error("Failed to load admin scripts", err);
+      }
+    };
+
+    loadScripts();
+
+    // Cleanup function: Remove admin CSS when leaving admin section to avoid style bleeding
+    return () => {
+      links.forEach(link => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+      });
+      // Optionally remove scripts, but that's harder and usually unnecessary if they are scoped to DOM elements that disappear.
+      // However, forcing a reload might be needed if they pollute global window objects heavily.
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-brand-gray-50 text-brand-gray-800 flex">
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-white rounded-xl shadow-lg border border-brand-gray-200"
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+    <div id="main-wrapper" className={`show ${sidebarOpen ? '' : 'menu-toggle'}`}>
+
+      {/* Nav Header */}
+      <div className="nav-header">
+        <Link to="/admin/dashboard" className="brand-logo">
+          {/* Replaced SVG with simplified Text/Logo for now to ensure rendering */}
+          <h2 className="text-white text-2xl font-bold m-0 p-0">Bazzaro Admin</h2>
+        </Link>
+        <div className="nav-control" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <div className={`hamburger ${sidebarOpen ? 'is-active' : ''}`}>
+            <span className="line"></span><span className="line"></span><span className="line"></span>
+          </div>
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="header">
+        <div className="header-content">
+          <nav className="navbar navbar-expand">
+            <div className="collapse navbar-collapse justify-content-between">
+              <div className="header-left">
+                <div className="dashboard_bar">
+                  Dashboard
+                </div>
+              </div>
+              <ul className="navbar-nav header-right">
+                <li className="nav-item dropdown notification_dropdown">
+                  <a className="nav-link" href="#" role="button" data-bs-toggle="dropdown">
+                    <Bell size={20} />
+                    <span className="badge badge-primary">0</span>
+                  </a>
+                </li>
+                <li className="nav-item dropdown header-profile">
+                  <a className="nav-link" href="#" role="button" data-bs-toggle="dropdown">
+                    <img src="/admin-assets/images/user.jpg" width="20" alt="" />
+                    <div className="header-info ms-3">
+                      <span className="fs-18 font-w500 mb-2">Admin User</span>
+                      <small className="fs-12 font-w400">Super Admin</small>
+                    </div>
+                  </a>
+                  <div className="dropdown-menu dropdown-menu-end">
+                    <Link to="/admin/profile" className="dropdown-item ai-icon">
+                      <User className="text-primary" size={18} />
+                      <span className="ms-2">Profile </span>
+                    </Link>
+                    <Link to="/logout" className="dropdown-item ai-icon">
+                      <LogOut className="text-danger" size={18} />
+                      <span className="ms-2">Logout </span>
+                    </Link>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
 
       {/* Sidebar */}
-      <aside className={`
-        fixed lg:sticky top-0 h-screen w-72 bg-white border-r border-brand-gray-200 flex flex-col z-40
-        transition-transform duration-300 ease-in-out
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
-        <div className="p-6 border-b border-brand-gray-200">
-          <h2 className="font-display text-2xl font-bold uppercase text-brand-gray-900">BAZZARO</h2>
-          <span className="text-xs text-brand-gray-400 font-semibold tracking-wider">ADMIN PANEL</span>
-        </div>
-        <nav className="flex-grow mt-4 px-3 overflow-y-auto">
-          {navItems.map(item => (
-            <NavLink
-              key={item.name}
-              to={item.path}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={({ isActive }: { isActive: boolean }) =>
-                `flex items-center gap-3 px-4 py-3 mb-1 text-sm font-bold rounded-xl transition-all ${isActive
-                  ? 'bg-brand-gray-900 text-white shadow-lg'
-                  : 'text-brand-gray-600 hover:bg-brand-gray-100 hover:text-brand-gray-900'
-                }`
-              }
-            >
-              <item.icon size={20} />
-              {item.name}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="p-4 border-t border-brand-gray-200 space-y-2">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-brand-gray-600 hover:bg-brand-gray-100 hover:text-brand-gray-900 rounded-xl transition-all"
-          >
-            <ArrowLeft size={20} />
-            Back to Store
-          </Link>
-          <Link
-            to="/login"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all"
-          >
-            <LogOut size={20} />
-            Logout
-          </Link>
-        </div>
-      </aside>
+      <div className="ic-sidenav">
+        <div className="ic-sidenav-scroll">
+          <ul className="metismenu" id="menu">
+            <li className={location.pathname === '/admin/dashboard' ? 'mm-active' : ''}>
+              <Link to="/admin/dashboard" className="ai-icon" aria-expanded="false">
+                <i className="flaticon-home"></i>
+                <span className="nav-text">Dashboard</span>
+              </Link>
+            </li>
 
-      {/* Overlay for mobile */}
-      {isMobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+            <li className="menu-title">Store Management</li>
 
-      {/* Main Content */}
-      <main className="flex-1 min-h-screen">
-        {children || (
-          <div className="p-8">
-            <h1 className="text-2xl font-bold text-brand-gray-900">Welcome to Admin Panel</h1>
-            <p className="text-brand-gray-500 mt-2">Select a section from the sidebar to get started.</p>
-          </div>
-        )}
-      </main>
+            <li className={location.pathname.startsWith('/admin/products') ? 'mm-active' : ''}>
+              <Link to="/admin/products" className="ai-icon" aria-expanded="false">
+                <i className="flaticon-shopping-bag"></i>
+                <span className="nav-text">Products</span>
+              </Link>
+            </li>
+
+            <li className={location.pathname.startsWith('/admin/orders') ? 'mm-active' : ''}>
+              <Link to="/admin/orders" className="ai-icon" aria-expanded="false">
+                <i className="flaticon-rocket"></i>
+                <span className="nav-text">Orders</span>
+              </Link>
+            </li>
+
+            <li className={location.pathname.startsWith('/admin/customers') ? 'mm-active' : ''}>
+              <Link to="/admin/customers" className="ai-icon" aria-expanded="false">
+                <i className="flaticon-user"></i>
+                <span className="nav-text">Customers</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Content Body */}
+      <div className="content-body">
+        <div className="container-fluid">
+          <Outlet />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="footer">
+        <div className="copyright">
+          <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">DexignLab</a> 2024</p>
+        </div>
+      </div>
+
     </div>
   );
 };
